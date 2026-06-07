@@ -1,0 +1,897 @@
+fileFormatVersion: 2
+guid: 1fbdbb9bd0c3b45a8a3d73ecb0dc5812
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7070423023118264655
+    second: SlimeAISheet_alpha_0
+  - first:
+      213: 5823798395646820568
+    second: SlimeAISheet_alpha_1
+  - first:
+      213: 1235510365064791066
+    second: SlimeAISheet_alpha_2
+  - first:
+      213: -1935125952273692888
+    second: SlimeAISheet_alpha_3
+  - first:
+      213: -1113460988855087773
+    second: SlimeAISheet_alpha_4
+  - first:
+      213: -8289171972335565234
+    second: SlimeAISheet_alpha_5
+  - first:
+      213: -6311361047468777707
+    second: SlimeAISheet_alpha_6
+  - first:
+      213: 4439378682403655170
+    second: SlimeAISheet_alpha_7
+  - first:
+      213: 8363408341182855014
+    second: SlimeAISheet_alpha_8
+  - first:
+      213: 1064681679906499336
+    second: SlimeAISheet_alpha_9
+  - first:
+      213: -1417867267967558654
+    second: SlimeAISheet_alpha_10
+  - first:
+      213: 555147502170785444
+    second: SlimeAISheet_alpha_11
+  - first:
+      213: 3244789700523277192
+    second: SlimeAISheet_alpha_12
+  - first:
+      213: -4225511367672236951
+    second: SlimeAISheet_alpha_13
+  - first:
+      213: 9201055626761057402
+    second: SlimeAISheet_alpha_14
+  - first:
+      213: -932863767834343812
+    second: SlimeAISheet_alpha_15
+  - first:
+      213: -6144623684309465968
+    second: SlimeAISheet_alpha_16
+  - first:
+      213: -7114167833441948397
+    second: SlimeAISheet_alpha_17
+  - first:
+      213: -8362288522175157829
+    second: SlimeAISheet_alpha_18
+  - first:
+      213: 731204919650794943
+    second: SlimeAISheet_alpha_19
+  - first:
+      213: -7132523827932589081
+    second: SlimeAISheet_alpha_20
+  - first:
+      213: 1595835411324202299
+    second: SlimeAISheet_alpha_21
+  - first:
+      213: -1530276862157718984
+    second: SlimeAISheet_alpha_22
+  - first:
+      213: -2177385594109245268
+    second: SlimeAISheet_alpha_23
+  - first:
+      213: -3935523962262839946
+    second: SlimeAISheet_alpha_24
+  - first:
+      213: 4121942758373015565
+    second: SlimeAISheet_alpha_25
+  - first:
+      213: 1845293584744638617
+    second: SlimeAISheet_alpha_26
+  - first:
+      213: 850432869624450940
+    second: SlimeAISheet_alpha_27
+  - first:
+      213: -7485006917718901402
+    second: SlimeAISheet_alpha_28
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_0
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 272
+        width: 157
+        height: 127
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b6da4f98bfc0ed90800000000000000
+      internalID: -7070423023118264655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_1
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 272
+        width: 186
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d0c408f8c942d050800000000000000
+      internalID: 5823798395646820568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_2
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 270
+        width: 133
+        height: 172
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a14000a812a652110800000000000000
+      internalID: 1235510365064791066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_3
+      rect:
+        serializedVersion: 2
+        x: 628
+        y: 272
+        width: 157
+        height: 127
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 827461bf23d0525e0800000000000000
+      internalID: -1935125952273692888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_4
+      rect:
+        serializedVersion: 2
+        x: 824
+        y: 269
+        width: 195
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36d890841213c80f0800000000000000
+      internalID: -1113460988855087773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_5
+      rect:
+        serializedVersion: 2
+        x: 1276
+        y: 271
+        width: 124
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4680d25202f6fc80800000000000000
+      internalID: -8289171972335565234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_6
+      rect:
+        serializedVersion: 2
+        x: 1437
+        y: 277
+        width: 169
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51fd26cf09a8968a0800000000000000
+      internalID: -6311361047468777707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_7
+      rect:
+        serializedVersion: 2
+        x: 1685
+        y: 372
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20e8c1c0467db9d30800000000000000
+      internalID: 4439378682403655170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_8
+      rect:
+        serializedVersion: 2
+        x: 1728
+        y: 352
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6673eb7339bc01470800000000000000
+      internalID: 8363408341182855014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_9
+      rect:
+        serializedVersion: 2
+        x: 1040
+        y: 266
+        width: 211
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80b61b1d85286ce00800000000000000
+      internalID: 1064681679906499336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_10
+      rect:
+        serializedVersion: 2
+        x: 1650
+        y: 333
+        width: 39
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20cd3226b39b25ce0800000000000000
+      internalID: -1417867267967558654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_11
+      rect:
+        serializedVersion: 2
+        x: 1856
+        y: 349
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a6c5d046b744b700800000000000000
+      internalID: 555147502170785444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_12
+      rect:
+        serializedVersion: 2
+        x: 1914
+        y: 352
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88b398e7a0fc70d20800000000000000
+      internalID: 3244789700523277192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_13
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 332
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 964758f7cc7fb55c0800000000000000
+      internalID: -4225511367672236951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_14
+      rect:
+        serializedVersion: 2
+        x: 1823
+        y: 325
+        width: 22
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a74b3bfd757b0bf70800000000000000
+      internalID: 9201055626761057402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_15
+      rect:
+        serializedVersion: 2
+        x: 1893
+        y: 331
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c76c66e785dcd03f0800000000000000
+      internalID: -932863767834343812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_16
+      rect:
+        serializedVersion: 2
+        x: 2011
+        y: 330
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09448429059e9baa0800000000000000
+      internalID: -6144623684309465968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_17
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 308
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31dae274c06654d90800000000000000
+      internalID: -7114167833441948397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_18
+      rect:
+        serializedVersion: 2
+        x: 1656
+        y: 271
+        width: 68
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb96c66f4ee23fb80800000000000000
+      internalID: -8362288522175157829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_19
+      rect:
+        serializedVersion: 2
+        x: 1734
+        y: 304
+        width: 29
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbdbdc51003c52a00800000000000000
+      internalID: 731204919650794943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_20
+      rect:
+        serializedVersion: 2
+        x: 1906
+        y: 299
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e391144e5f240d90800000000000000
+      internalID: -7132523827932589081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_21
+      rect:
+        serializedVersion: 2
+        x: 1940
+        y: 314
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3de7fbf9db852610800000000000000
+      internalID: 1595835411324202299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_22
+      rect:
+        serializedVersion: 2
+        x: 1981
+        y: 266
+        width: 153
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83af6173d4d53cae0800000000000000
+      internalID: -1530276862157718984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_23
+      rect:
+        serializedVersion: 2
+        x: 2084
+        y: 310
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca8c014a65f58c1e0800000000000000
+      internalID: -2177385594109245268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_24
+      rect:
+        serializedVersion: 2
+        x: 1763
+        y: 284
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67d1940cec53269c0800000000000000
+      internalID: -3935523962262839946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_25
+      rect:
+        serializedVersion: 2
+        x: 1809
+        y: 298
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0041598915143930800000000000000
+      internalID: 4121942758373015565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_26
+      rect:
+        serializedVersion: 2
+        x: 1854
+        y: 285
+        width: 36
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 998e2011dbccb9910800000000000000
+      internalID: 1845293584744638617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_27
+      rect:
+        serializedVersion: 2
+        x: 1731
+        y: 273
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7f084b60385dcb00800000000000000
+      internalID: 850432869624450940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SlimeAISheet_alpha_28
+      rect:
+        serializedVersion: 2
+        x: 1903
+        y: 271
+        width: 36
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66df5089dd9ef1890800000000000000
+      internalID: -7485006917718901402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SlimeAISheet_alpha_0: -7070423023118264655
+      SlimeAISheet_alpha_1: 5823798395646820568
+      SlimeAISheet_alpha_10: -1417867267967558654
+      SlimeAISheet_alpha_11: 555147502170785444
+      SlimeAISheet_alpha_12: 3244789700523277192
+      SlimeAISheet_alpha_13: -4225511367672236951
+      SlimeAISheet_alpha_14: 9201055626761057402
+      SlimeAISheet_alpha_15: -932863767834343812
+      SlimeAISheet_alpha_16: -6144623684309465968
+      SlimeAISheet_alpha_17: -7114167833441948397
+      SlimeAISheet_alpha_18: -8362288522175157829
+      SlimeAISheet_alpha_19: 731204919650794943
+      SlimeAISheet_alpha_2: 1235510365064791066
+      SlimeAISheet_alpha_20: -7132523827932589081
+      SlimeAISheet_alpha_21: 1595835411324202299
+      SlimeAISheet_alpha_22: -1530276862157718984
+      SlimeAISheet_alpha_23: -2177385594109245268
+      SlimeAISheet_alpha_24: -3935523962262839946
+      SlimeAISheet_alpha_25: 4121942758373015565
+      SlimeAISheet_alpha_26: 1845293584744638617
+      SlimeAISheet_alpha_27: 850432869624450940
+      SlimeAISheet_alpha_28: -7485006917718901402
+      SlimeAISheet_alpha_3: -1935125952273692888
+      SlimeAISheet_alpha_4: -1113460988855087773
+      SlimeAISheet_alpha_5: -8289171972335565234
+      SlimeAISheet_alpha_6: -6311361047468777707
+      SlimeAISheet_alpha_7: 4439378682403655170
+      SlimeAISheet_alpha_8: 8363408341182855014
+      SlimeAISheet_alpha_9: 1064681679906499336
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
