@@ -71,7 +71,7 @@ public class JuiceManager : MonoBehaviour
 
     public static void HitStop(float seconds)
     {
-        if (Instance == null || !GameSession.HasStarted || GameSession.HasEnded || SpecialCutin.IsPlaying)
+        if (Instance == null || !GameSession.HasStarted || GameSession.HasEnded)
         {
             return;
         }
@@ -89,7 +89,7 @@ public class JuiceManager : MonoBehaviour
         Time.timeScale = 0.05f;
         yield return new WaitForSecondsRealtime(seconds);
 
-        if (GameSession.HasStarted && !GameSession.HasEnded && !SpecialCutin.IsPlaying)
+        if (GameSession.HasStarted && !GameSession.HasEnded)
         {
             Time.timeScale = 1f;
         }
@@ -142,38 +142,6 @@ public class JuiceManager : MonoBehaviour
             Color color = Color.HSVToRGB(Random.value, Random.Range(0.6f, 0.95f), 1f);
             Vector2 velocity = new Vector2(Random.Range(-5.5f, 5.5f), Random.Range(4f, 11f));
             Instance.SpawnParticle(position, color, velocity, 8f, Random.Range(1.1f, 2.1f), Random.Range(0.8f, 1.6f));
-        }
-    }
-
-    public static void Firework(Vector3 position, Color color)
-    {
-        if (Instance == null)
-        {
-            return;
-        }
-
-        for (int i = 0; i < 26; i++)
-        {
-            float angle = (i / 26f) * Mathf.PI * 2f + Random.Range(-0.1f, 0.1f);
-            float magnitude = Random.Range(3.2f, 5.4f);
-            Vector2 velocity = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * magnitude;
-            Color sparkColor = Random.value < 0.25f ? Color.white : color;
-            Instance.SpawnParticle(position, sparkColor, velocity, 3.5f, Random.Range(0.9f, 1.4f), Random.Range(0.7f, 1.2f));
-        }
-    }
-
-    // Slowly rising sparks for torches and magma.
-    public static void Embers(Vector3 position, Color color, int count)
-    {
-        if (Instance == null)
-        {
-            return;
-        }
-
-        for (int i = 0; i < count; i++)
-        {
-            Vector2 velocity = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(0.8f, 1.8f));
-            Instance.SpawnParticle(position, color, velocity, -1.2f, Random.Range(0.7f, 1.3f), Random.Range(0.25f, 0.45f));
         }
     }
 

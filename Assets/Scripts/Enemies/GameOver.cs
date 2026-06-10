@@ -312,11 +312,6 @@ public class GameOver : MonoBehaviour
         return Mathf.Max(stompCheckMargin, MinimumStompMargin);
     }
 
-    public void DefeatBySpecial(Vector3 sourcePosition)
-    {
-        DefeatEnemy(null, sourcePosition);
-    }
-
     void DefeatEnemy(GameObject player, Vector3 hitSourcePosition)
     {
         if (isDefeated)
@@ -520,21 +515,35 @@ public class GameOver : MonoBehaviour
 
     void GameOverPlayer(GameObject player)
     {
-        if (isDefeated || !player.CompareTag("Player"))
+        if (isGameOver || isDefeated || !player.CompareTag("Player"))
         {
             return;
         }
 
-        // Star power: during FEVER, touching an enemy destroys it instead.
-        if (ScoreSystem.IsFever)
+        isGameOver = true;
+
+        RetroSfx.PlayGameOver();
+        JuiceManager.Shake(0.5f);
+        JuiceManager.Burst(player.transform.position, new Color(1f, 0.35f, 0.3f), 16, 6f);
+
+        if (gameOverText != null)
         {
-            DefeatEnemy(player, player.transform.position);
-            return;
+            gameOverText.SetActive(true);
+
+            Text text = gameOverText.GetComponent<Text>();
+            if (text != null)
+            {
+                text.text = "ゲームオーバーだよ";
+            }
+        }
+        else
+        {
+            showedImageBanner = EndBannerUI.Show("UI/GameOverBanner");
         }
 
-        // No game-over screen: respawn at the last checkpoint.
-        RespawnSystem.KillPlayer(player);
-        return;
+        GameSession.EndGame(player);
+
+        Debug.Log("ゲームオーバーだよ");
     }
 
     void SnapToGround()

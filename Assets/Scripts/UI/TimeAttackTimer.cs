@@ -25,12 +25,6 @@ public class TimeAttackTimer : MonoBehaviour
 
     void OnGUI()
     {
-        // Hidden while the opening title screen or the ending credits run.
-        if (!GameSession.HasStarted || EndingDirector.IsActive)
-        {
-            return;
-        }
-
         EnsureResources();
 
         float scale = Mathf.Clamp(Screen.height / 1080f, 0.74f, 1.2f);
