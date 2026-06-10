@@ -184,9 +184,14 @@ public static class LevelBuilder
         overlay.transform.position = new Vector3(22f, 2f, 0f);
         overlay.transform.localScale = new Vector3(95f, 45f, 1f);
 
+        // The painted cave backdrop already carries its own darkness, so the
+        // overlay only needs a light touch there - full strength would crush
+        // the magma glow. Without art it does the darkening alone.
+        bool hasStageArt = Resources.Load<Sprite>("StageArt/Stage4/sky") != null;
+
         SpriteRenderer renderer = overlay.AddComponent<SpriteRenderer>();
         renderer.sprite = CreateSolidSprite();
-        renderer.color = new Color(0.02f, 0.03f, 0.1f, 0.68f);
+        renderer.color = new Color(0.02f, 0.03f, 0.1f, hasStageArt ? 0.38f : 0.68f);
         renderer.sortingOrder = 5;
     }
 

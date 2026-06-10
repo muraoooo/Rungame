@@ -15,6 +15,14 @@ public static class StageArtBootstrap
         GameObject root = new GameObject(RootName);
         root.hideFlags = HideFlags.DontSave;
 
+        // A full stage backdrop replaces the legacy grassland layers, which
+        // would otherwise draw in front of it (Background sits at order -10,
+        // above the sky/far/mid layers at -40/-35/-30).
+        if (Resources.Load<Sprite>("StageArt/Stage" + stage + "/sky") != null)
+        {
+            DisableLegacyBackdrop();
+        }
+
         BuildBackdropLayer(root.transform, stage, "sky", -40, 0f, 1f, 0f, 1.15f);
         BuildBackdropLayer(root.transform, stage, "far", -35, -0.15f, 0.92f, 0.05f, 1.1f);
         BuildBackdropLayer(root.transform, stage, "mid", -30, -0.7f, 0.86f, 0.16f, 1.05f);
@@ -23,6 +31,19 @@ public static class StageArtBootstrap
         BuildPropLayer(root.transform, stage, "Far", -32, 8, 1.2f, 1.1f, 0.07f, 101);
         BuildPropLayer(root.transform, stage, "Mid", -24, 10, -0.7f, 1f, 0.18f, 202);
         BuildPropLayer(root.transform, stage, "Near", 22, 7, -2.1f, 1.15f, 0.75f, 303);
+    }
+
+    static void DisableLegacyBackdrop()
+    {
+        string[] legacyNames = { "Background", "ForestParallax", "FarCloudParallax", "ForegroundTreeParallax" };
+        foreach (string legacyName in legacyNames)
+        {
+            GameObject legacy = GameObject.Find(legacyName);
+            if (legacy != null)
+            {
+                legacy.SetActive(false);
+            }
+        }
     }
 
     static void BuildBackdropLayer(Transform root, int stage, string name, int sortingOrder, float y, float scale, float parallaxStrength, float heightScale)
