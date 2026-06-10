@@ -15,12 +15,11 @@ public static class StageArtBootstrap
         GameObject root = new GameObject(RootName);
         root.hideFlags = HideFlags.DontSave;
 
-        // A full stage backdrop replaces the legacy grassland layers, which
-        // would otherwise draw in front of it (Background sits at order -10,
-        // above the sky/far/mid layers at -40/-35/-30). Either "sky" or a
-        // full-bleed "far" counts as a full backdrop (Stage3 ships far only).
-        if (Resources.Load<Sprite>("StageArt/Stage" + stage + "/sky") != null
-            || Resources.Load<Sprite>("StageArt/Stage" + stage + "/far") != null)
+        // A stage art layer replaces the legacy grassland layers, which would
+        // otherwise draw in front of it (Background sits at order -10, above
+        // the sky/far/mid layers at -40/-35/-30). Some stages ship only one
+        // full-bleed layer, so check every supported layer name.
+        if (HasStageArt(stage))
         {
             DisableLegacyBackdrop();
         }
@@ -28,11 +27,11 @@ public static class StageArtBootstrap
         BuildBackdropLayer(root.transform, stage, "sky", -40, 0f, 1f, 0f, 1.15f);
         BuildBackdropLayer(root.transform, stage, "far", -35, -0.15f, 0.92f, 0.05f, 1.1f);
         BuildBackdropLayer(root.transform, stage, "mid", -30, -0.7f, 0.86f, 0.16f, 1.05f);
-        BuildBackdropLayer(root.transform, stage, "near", 25, -1.9f, 1f, 0.62f, 1.05f);
+        BuildBackdropLayer(root.transform, stage, "near", -18, -1.9f, 1f, 0.62f, 1.05f);
 
         BuildPropLayer(root.transform, stage, "Far", -32, 8, 1.2f, 1.1f, 0.07f, 101);
         BuildPropLayer(root.transform, stage, "Mid", -24, 10, -0.7f, 1f, 0.18f, 202);
-        BuildPropLayer(root.transform, stage, "Near", 22, 7, -2.1f, 1.15f, 0.75f, 303);
+        BuildPropLayer(root.transform, stage, "Near", -16, 7, -2.1f, 1.15f, 0.75f, 303);
     }
 
     static void DisableLegacyBackdrop()
@@ -46,6 +45,21 @@ public static class StageArtBootstrap
                 legacy.SetActive(false);
             }
         }
+    }
+
+    static bool HasStageArt(int stage)
+    {
+        string prefix = "StageArt/Stage" + stage + "/";
+        string[] layerNames = { "sky", "far", "mid", "near" };
+        foreach (string layerName in layerNames)
+        {
+            if (Resources.Load<Sprite>(prefix + layerName) != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     static void BuildBackdropLayer(Transform root, int stage, string name, int sortingOrder, float y, float scale, float parallaxStrength, float heightScale)

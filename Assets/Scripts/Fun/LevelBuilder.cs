@@ -187,7 +187,7 @@ public static class LevelBuilder
         // The painted cave backdrop already carries its own darkness, so the
         // overlay only needs a light touch there - full strength would crush
         // the magma glow. Without art it does the darkening alone.
-        bool hasStageArt = Resources.Load<Sprite>("StageArt/Stage4/sky") != null;
+        bool hasStageArt = HasStageArt(4);
 
         SpriteRenderer renderer = overlay.AddComponent<SpriteRenderer>();
         renderer.sprite = CreateSolidSprite();
@@ -281,10 +281,21 @@ public static class LevelBuilder
         overlay.transform.position = new Vector3(22f, 2f, 0f);
         overlay.transform.localScale = new Vector3(95f, 45f, 1f);
 
+        bool hasStageArt = HasStageArt(5);
+
         SpriteRenderer renderer = overlay.AddComponent<SpriteRenderer>();
         renderer.sprite = CreateSolidSprite();
-        renderer.color = new Color(0.12f, 0.04f, 0.22f, 0.48f);
+        renderer.color = new Color(0.12f, 0.04f, 0.22f, hasStageArt ? 0.28f : 0.48f);
         renderer.sortingOrder = 5;
+    }
+
+    static bool HasStageArt(int stage)
+    {
+        string prefix = "StageArt/Stage" + stage + "/";
+        return Resources.Load<Sprite>(prefix + "sky") != null
+            || Resources.Load<Sprite>(prefix + "far") != null
+            || Resources.Load<Sprite>(prefix + "mid") != null
+            || Resources.Load<Sprite>(prefix + "near") != null;
     }
 
     static GameObject CreateBossBarrier(float x)
