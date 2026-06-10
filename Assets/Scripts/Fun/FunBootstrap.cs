@@ -66,12 +66,13 @@ public class FunBootstrap : MonoBehaviour
             }
         }
 
-        StartCoroutine(SpawnCoinsNextFrame());
+        StartCoroutine(BuildLevelNextFrame());
     }
 
-    IEnumerator SpawnCoinsNextFrame()
+    IEnumerator BuildLevelNextFrame()
     {
         yield return null;
+        LevelBuilder.Build(LevelManager.CurrentStage);
         CoinSpawner.SpawnLevelCoins();
     }
 }

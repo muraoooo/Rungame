@@ -18,12 +18,15 @@ public static class ScoreSystem
 
     static float comboEndTime;
     static float feverEndTime;
+    static float magnetEndTime;
 
     public static bool IsFever => GameSession.HasStarted && Time.time < feverEndTime;
+    public static bool MagnetActive => GameSession.HasStarted && !GameSession.HasEnded && Time.time < magnetEndTime;
+    public static float MagnetTimeLeft => Mathf.Max(0f, magnetEndTime - Time.time);
     public static float FeverTimeLeft => Mathf.Max(0f, feverEndTime - Time.time);
     public static float ComboTimeLeft => Mathf.Max(0f, comboEndTime - Time.time);
     public static float SpeedMultiplier => IsFever && !GameSession.HasEnded ? 1.3f : 1f;
-    public static float BestTime => PlayerPrefs.GetFloat(BestTimeKey, 0f);
+    public static float BestTime => PlayerPrefs.GetFloat(BestTimeKeyForStage(), 0f);
 
     public static void Reset()
     {
@@ -34,6 +37,7 @@ public static class ScoreSystem
         NewRecord = false;
         comboEndTime = 0f;
         feverEndTime = 0f;
+        magnetEndTime = 0f;
         ScorePopTime = -10f;
     }
 
@@ -95,6 +99,11 @@ public static class ScoreSystem
         return true;
     }
 
+    public static void ActivateMagnet(float seconds)
+    {
+        magnetEndTime = Time.time + seconds;
+    }
+
     public static void OnGoal(float clearTime)
     {
         int timeBonus = Mathf.Max(0, Mathf.RoundToInt((90f - clearTime) * 25f));
@@ -106,10 +115,15 @@ public static class ScoreSystem
         float best = BestTime;
         if (best <= 0f || clearTime < best)
         {
-            PlayerPrefs.SetFloat(BestTimeKey, clearTime);
+            PlayerPrefs.SetFloat(BestTimeKeyForStage(), clearTime);
             PlayerPrefs.Save();
             NewRecord = true;
         }
+    }
+
+    static string BestTimeKeyForStage()
+    {
+        return BestTimeKey + "_S" + LevelManager.CurrentStage;
     }
 
     static void StartFever(Vector3 position)

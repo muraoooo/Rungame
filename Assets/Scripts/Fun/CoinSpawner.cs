@@ -26,7 +26,7 @@ public static class CoinSpawner
         }
     }
 
-    static bool TryFindGround(float x, out Vector2 groundPoint)
+    public static bool TryFindGround(float x, out Vector2 groundPoint)
     {
         groundPoint = Vector2.zero;
         RaycastHit2D[] hits = Physics2D.RaycastAll(new Vector2(x, 14f), Vector2.down, 30f);
@@ -42,6 +42,12 @@ public static class CoinSpawner
 
             string name = hit.collider.gameObject.name;
             if (!name.StartsWith("Ground") && !name.StartsWith("Platform"))
+            {
+                continue;
+            }
+
+            // Moving lifts are only sometimes at the raycast position.
+            if (name.Contains("Lift"))
             {
                 continue;
             }

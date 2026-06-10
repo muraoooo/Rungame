@@ -16,6 +16,7 @@ public static class RetroSfx
     static AudioClip gameOverClip;
     static AudioClip cutinClip;
     static AudioClip specialBoomClip;
+    static AudioClip springClip;
 
     public static void PlayJump()
     {
@@ -128,6 +129,17 @@ public static class RetroSfx
         }
 
         Play(gameOverClip);
+    }
+
+    public static void PlaySpring()
+    {
+        if (springClip == null)
+        {
+            springClip = SynthClip("Sfx_Spring", 0.2f, time =>
+                Mathf.Sin(SweepPhase(time, 160f, 950f, 0.2f) * Mathf.PI * 2f) * Decay(time, 0.2f) * 0.34f);
+        }
+
+        Play(springClip);
     }
 
     public static void PlayCutin()
