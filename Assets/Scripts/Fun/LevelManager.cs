@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class LevelManager
 {
-    public const int MaxStage = 4;
+    public const int MaxStage = 5;
 
     public static int CurrentStage { get; private set; } = 1;
 

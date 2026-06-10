@@ -162,6 +162,21 @@ public class JuiceManager : MonoBehaviour
         }
     }
 
+    // Slowly rising sparks for torches and magma.
+    public static void Embers(Vector3 position, Color color, int count)
+    {
+        if (Instance == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 velocity = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(0.8f, 1.8f));
+            Instance.SpawnParticle(position, color, velocity, -1.2f, Random.Range(0.7f, 1.3f), Random.Range(0.25f, 0.45f));
+        }
+    }
+
     public static void Dust(Vector3 position, int count)
     {
         if (Instance == null)

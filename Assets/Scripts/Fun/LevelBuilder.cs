@@ -17,8 +17,11 @@ public static class LevelBuilder
             case 3:
                 BuildStage3();
                 break;
+            case 4:
+                BuildCaveStage();
+                break;
             default:
-                BuildStage4();
+                BuildBossStage();
                 break;
         }
     }
@@ -28,6 +31,18 @@ public static class LevelBuilder
     {
         SpawnSpringOnGround(18f);
         SpawnCheckpointOnGround(24f);
+
+        // First-timers get contextual coaching; veterans (anyone with a
+        // recorded clear) never see these.
+        if (IsFirstVisit(1))
+        {
+            SpawnHintOnGround(-5f, "→ キーで はしろう!");
+            SpawnHintOnGround(-2f, "スライムは うえから ふもう!");
+            SpawnHintOnGround(7f, "れんぞくで ふむと コンボ!");
+            SpawnHintOnGround(14f, "SHIFT で ダッシュ!");
+            SpawnHintOnGround(20f, "バネで おおジャンプ! くうちゅうで Q!");
+            SpawnHintOnGround(44f, "コイン5まいで W ひっさつ!");
+        }
     }
 
     // 1-2: spikes, faster enemies, a hopper, a lift and the coin magnet.
@@ -77,9 +92,93 @@ public static class LevelBuilder
         SpawnCheckpointOnGround(33.5f);
     }
 
-    // 1-4: the castle. Dark mood, precision spike rhythm, a lift crossing over
+    // 1-4: the cave. Deep darkness lit only by the player's lantern, torches
+    // and the glow of magma pools. Teaches light-reading before the castle.
+    static void BuildCaveStage()
+    {
+        CreateCaveDarkness();
+        TuneExistingSlimes(1.45f, 3.6f, 0.4f);
+
+        // The player carries a lantern through the dark
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null && player.GetComponent<PlayerLight>() == null)
+        {
+            player.AddComponent<PlayerLight>();
+        }
+
+        // Torches mark the safe path
+        float[] torchPositions = { 0f, 8f, 16f, 24f, 32f, 40f, 46.5f };
+        foreach (float x in torchPositions)
+        {
+            Vector2 torchGround;
+            if (CoinSpawner.TryFindGround(x, out torchGround))
+            {
+                Torch.Spawn(torchGround);
+            }
+        }
+
+        // Glowing magma pools - their light is both beauty and warning
+        SpawnMagmaOnGround(11f, 2.4f);
+        SpawnMagmaOnGround(20f, 3f);
+        SpawnMagmaOnGround(29f, 2.4f);
+        SpawnMagmaOnGround(36.5f, 3.6f);
+
+        SpawnExtraSlime(14f, 2.6f, 2.2f, false);
+        SpawnExtraSlime(26f, 2f, 1.8f, true);
+        SpawnExtraSlime(43f, 3f, 2.5f, false);
+
+        SpawnLiftOnGround(36.5f, 1.5f, 2.6f, 3f);
+        SpawnSpringOnGround(31f);
+        SpawnMagnetOnGround(24f, 1.3f);
+
+        SpawnCheckpointOnGround(17.5f);
+        SpawnCheckpointOnGround(33.5f);
+
+        if (IsFirstVisit(4))
+        {
+            SpawnHintOnGround(8.5f, "マグマに さわると やけど!");
+            SpawnHintOnGround(34f, "リフトで マグマを こえろ!");
+        }
+    }
+
+    static void CreateCaveDarkness()
+    {
+        GameObject overlay = new GameObject("StageDarkOverlay");
+        overlay.transform.position = new Vector3(22f, 2f, 0f);
+        overlay.transform.localScale = new Vector3(95f, 45f, 1f);
+
+        SpriteRenderer renderer = overlay.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSolidSprite();
+        renderer.color = new Color(0.02f, 0.03f, 0.1f, 0.68f);
+        renderer.sortingOrder = 5;
+    }
+
+    static void SpawnMagmaOnGround(float x, float width)
+    {
+        Vector2 groundPoint;
+        if (CoinSpawner.TryFindGround(x, out groundPoint))
+        {
+            MagmaPool.Spawn(groundPoint, width);
+        }
+    }
+
+    static void SpawnHintOnGround(float x, string text)
+    {
+        Vector2 groundPoint;
+        if (CoinSpawner.TryFindGround(x, out groundPoint))
+        {
+            TutorialHint.Spawn(new Vector3(groundPoint.x, groundPoint.y + 1f, 0f), text);
+        }
+    }
+
+    static bool IsFirstVisit(int stage)
+    {
+        return PlayerPrefs.GetFloat("RungameBestTime_S" + stage, 0f) <= 0f;
+    }
+
+    // 1-5: the castle. Dark mood, precision spike rhythm, a lift crossing over
     // a long death zone, and the King Slime boss guarding the goal.
-    static void BuildStage4()
+    static void BuildBossStage()
     {
         CreateDarkOverlay();
         TuneExistingSlimes(1.8f, 5f, 0.15f);

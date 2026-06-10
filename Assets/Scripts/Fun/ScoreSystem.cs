@@ -14,7 +14,11 @@ public static class ScoreSystem
     public static int SpecialCharge { get; private set; }
     public static bool SpecialReady => SpecialCharge >= SpecialChargeMax;
     public static bool NewRecord { get; private set; }
+    public static string LastRank { get; private set; } = "";
     public static float ScorePopTime { get; private set; }
+
+    // Par clear times per stage (index = stage number)
+    static readonly float[] parTimes = { 0f, 35f, 45f, 60f, 65f, 75f };
 
     static float comboEndTime;
     static float feverEndTime;
@@ -35,6 +39,7 @@ public static class ScoreSystem
         CoinsCollected = 0;
         SpecialCharge = 0;
         NewRecord = false;
+        LastRank = "";
         comboEndTime = 0f;
         feverEndTime = 0f;
         magnetEndTime = 0f;
@@ -129,8 +134,68 @@ public static class ScoreSystem
         if (best <= 0f || clearTime < best)
         {
             PlayerPrefs.SetFloat(BestTimeKeyForStage(), clearTime);
-            PlayerPrefs.Save();
             NewRecord = true;
+        }
+
+        // Rank: S = under par with no deaths, A = under par,
+        // B = under 1.4x par, C = finished. "One more run" fuel.
+        int stage = Mathf.Clamp(LevelManager.CurrentStage, 1, parTimes.Length - 1);
+        float par = parTimes[stage];
+        int rankValue;
+        if (clearTime <= par && RespawnSystem.Deaths == 0)
+        {
+            rankValue = 3;
+        }
+        else if (clearTime <= par)
+        {
+            rankValue = 2;
+        }
+        else if (clearTime <= par * 1.4f)
+        {
+            rankValue = 1;
+        }
+        else
+        {
+            rankValue = 0;
+        }
+
+        LastRank = RankName(rankValue);
+
+        string rankKey = "RungameBestRank_S" + stage;
+        if (rankValue > PlayerPrefs.GetInt(rankKey, -1))
+        {
+            PlayerPrefs.SetInt(rankKey, rankValue);
+        }
+
+        PlayerPrefs.Save();
+    }
+
+    public static string BestRank(int stage)
+    {
+        return RankName(PlayerPrefs.GetInt("RungameBestRank_S" + stage, -1));
+    }
+
+    public static Color RankColor(string rank)
+    {
+        switch (rank)
+        {
+            case "S": return new Color(1f, 0.85f, 0.2f);
+            case "A": return new Color(1f, 0.45f, 0.4f);
+            case "B": return new Color(0.5f, 0.8f, 1f);
+            case "C": return new Color(0.75f, 0.75f, 0.78f);
+            default: return Color.white;
+        }
+    }
+
+    static string RankName(int value)
+    {
+        switch (value)
+        {
+            case 3: return "S";
+            case 2: return "A";
+            case 1: return "B";
+            case 0: return "C";
+            default: return "";
         }
     }
 

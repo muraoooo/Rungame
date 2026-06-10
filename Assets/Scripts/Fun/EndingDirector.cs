@@ -263,7 +263,7 @@ public class EndingDirector : MonoBehaviour
         float blink = 0.55f + Mathf.Sin(Time.unscaledTime * 4f) * 0.45f;
         creditStyle.fontSize = Mathf.RoundToInt(26f * scale);
         DrawOutlined(new Rect(0f, height - 48f * scale, width, 36f * scale),
-            "ENTER で 1-1 から / R で 1-4 をもういちど", new Color(1f, 1f, 1f, blink), scale);
+            "ENTER で 1-1 から / R で 1-5 をもういちど", new Color(1f, 1f, 1f, blink), scale);
     }
 
     void EnsureStyles()

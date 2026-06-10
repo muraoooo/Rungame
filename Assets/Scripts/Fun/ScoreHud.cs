@@ -92,6 +92,7 @@ public class ScoreHud : MonoBehaviour
             case 1: return "はしりだそう!";
             case 2: return "トゲに ちゅうい!";
             case 3: return "さいごの しれん!!";
+            case 4: return "ひかりを たよりに すすめ…";
             default: return "キングスライムの しろ…";
         }
     }
@@ -230,6 +231,7 @@ public class ScoreHud : MonoBehaviour
 
         if (GameSession.ReachedGoal)
         {
+            DrawRankStamp(scale);
             bigStyle.fontSize = Mathf.RoundToInt(34f * scale);
             Rect timeRect = new Rect(0f, Screen.height - 124f * scale, Screen.width, 46f * scale);
             string result = "タイム " + FormatTime(GameSession.ElapsedTime) + "   スコア " + ScoreSystem.Score.ToString("N0");
@@ -264,6 +266,33 @@ public class ScoreHud : MonoBehaviour
         hintStyle.fontSize = Mathf.RoundToInt(30f * scale);
         Rect restartRect = new Rect(0f, Screen.height - 58f * scale, Screen.width, 40f * scale);
         DrawOutlined(restartRect, hint, hintStyle, new Color(1f, 1f, 1f, blink));
+    }
+
+    void DrawRankStamp(float scale)
+    {
+        string rank = ScoreSystem.LastRank;
+        if (string.IsNullOrEmpty(rank))
+        {
+            return;
+        }
+
+        float pulse = 1f + Mathf.Sin(Time.unscaledTime * 5f) * 0.05f;
+        Color color = ScoreSystem.RankColor(rank);
+        if (rank == "S")
+        {
+            color = Color.HSVToRGB(Mathf.Repeat(Time.unscaledTime * 1.4f, 1f), 0.55f, 1f);
+        }
+
+        Rect rect = new Rect(Screen.width * 0.72f, Screen.height * 0.28f, 280f * scale, 200f * scale);
+        Matrix4x4 matrix = GUI.matrix;
+        GUIUtility.RotateAroundPivot(-12f, rect.center);
+
+        bigStyle.fontSize = Mathf.RoundToInt(36f * scale);
+        DrawOutlined(new Rect(rect.x, rect.y, rect.width, 44f * scale), "RANK", bigStyle, color);
+        bigStyle.fontSize = Mathf.RoundToInt(150f * scale * pulse);
+        DrawOutlined(new Rect(rect.x, rect.y + 36f * scale, rect.width, 170f * scale), rank, bigStyle, color);
+
+        GUI.matrix = matrix;
     }
 
     void DrawOutlined(Rect rect, string text, GUIStyle style, Color color)

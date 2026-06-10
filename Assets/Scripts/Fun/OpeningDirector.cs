@@ -229,7 +229,7 @@ public class OpeningDirector : MonoBehaviour
 
         textStyle.fontSize = Mathf.RoundToInt(26f * scale);
         DrawOutlined(new Rect(0f, height * 0.55f + 64f * scale, width, 36f * scale),
-            "ステージ 1-" + LevelManager.CurrentStage + " (1〜4キーで えらべる)", Color.white, scale);
+            "ステージ 1-" + LevelManager.CurrentStage + " (1〜5キーで えらべる)", Color.white, scale);
 
         textStyle.fontSize = Mathf.RoundToInt(19f * scale);
         DrawOutlined(new Rect(0f, height - 46f * scale, width, 30f * scale),
@@ -259,9 +259,12 @@ public class OpeningDirector : MonoBehaviour
             }
 
             int minutes = Mathf.FloorToInt(best / 60f);
-            string text = "1-" + stage + "  " + minutes.ToString("00") + ":" + (best - minutes * 60f).ToString("00.00");
+            string rank = ScoreSystem.BestRank(stage);
+            string text = "1-" + stage + "  " + minutes.ToString("00") + ":" + (best - minutes * 60f).ToString("00.00")
+                + (string.IsNullOrEmpty(rank) ? "" : "  [" + rank + "]");
+            Color rowColor = string.IsNullOrEmpty(rank) ? Color.white : ScoreSystem.RankColor(rank);
             DrawOutlinedAt(new Rect(width - 320f * scale, y, 300f * scale, 30f * scale),
-                text, Color.white, scale, TextAnchor.MiddleRight);
+                text, rowColor, scale, TextAnchor.MiddleRight);
             y += 30f * scale;
         }
     }
