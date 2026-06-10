@@ -13,6 +13,11 @@ public class PlayerDash : MonoBehaviour
     float nextDashTime = -10f;
     float nextGhostTime;
 
+    public void RechargeNow()
+    {
+        nextDashTime = -10f;
+    }
+
     void Start()
     {
         playerMove = GetComponent<PlayerMove>();

@@ -37,6 +37,7 @@ public class FunBootstrap : MonoBehaviour
 
     void SetUpScene()
     {
+        LevelManager.DetectStageFromScene(SceneManager.GetActiveScene().name);
         ScoreSystem.Reset();
 
         if (FindAnyObjectByType<JuiceManager>() == null)
@@ -45,14 +46,29 @@ public class FunBootstrap : MonoBehaviour
             manager.AddComponent<JuiceManager>();
             manager.AddComponent<ScoreHud>();
             manager.AddComponent<RestartController>();
+            manager.AddComponent<OpeningDirector>();
+            manager.AddComponent<EndingDirector>();
+            manager.AddComponent<MusicDirector>();
         }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
+            RespawnSystem.Reset(player.transform.position);
+
+            if (player.GetComponent<PlayerBlinker>() == null)
+            {
+                player.AddComponent<PlayerBlinker>();
+            }
+
             if (player.GetComponent<PlayerDash>() == null)
             {
                 player.AddComponent<PlayerDash>();
+            }
+
+            if (player.GetComponent<SpecialAttack>() == null)
+            {
+                player.AddComponent<SpecialAttack>();
             }
 
             if (player.GetComponent<PlayerAttackShooter>() == null)
@@ -61,12 +77,15 @@ public class FunBootstrap : MonoBehaviour
             }
         }
 
-        StartCoroutine(SpawnCoinsNextFrame());
+        StartCoroutine(BuildLevelNextFrame());
     }
 
-    IEnumerator SpawnCoinsNextFrame()
+    IEnumerator BuildLevelNextFrame()
     {
         yield return null;
-        CoinSpawner.SpawnLevelCoins();
+        StageArtBootstrap.Build(LevelManager.CurrentStage);
+        LevelStretcher.Apply(LevelManager.CurrentStage);
+        LevelBuilder.Build(LevelManager.CurrentStage);
+        CoinSpawner.SpawnLevelCoins(LevelStretcher.CoinEndXForStage(LevelManager.CurrentStage));
     }
 }

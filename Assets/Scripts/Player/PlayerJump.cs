@@ -51,6 +51,7 @@ public class PlayerJump : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         rb2d.constraints |= RigidbodyConstraints2D.FreezeRotation;
         rb2d.gravityScale = gravityScale;
+        jumpPower = Mathf.Max(jumpPower, 10f);
         playerCollider = GetComponent<Collider2D>();
         FitColliderToBikeBodyIfNeeded();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -276,6 +277,7 @@ public class PlayerJump : MonoBehaviour
 
         float visualScale = isJumpVisual ? jumpScale : idleScale;
         transform.localScale = new Vector3(baseScale.x * visualScale, baseScale.y * visualScale, baseScale.z);
+        UpdateColliderFit(isGrounded, visualScale);
 
         // If animator exists, we let the animator handle visuals
         if (animator != null && animator.runtimeAnimatorController != null)
@@ -314,6 +316,37 @@ public class PlayerJump : MonoBehaviour
         }
 
         spriteRenderer.sprite = isGrounded || useRideVisualAfterAcrobat ? idleSprite : jumpSprite;
+    }
+
+    // Keeps the world-space hitbox the same size even while the jump visual is
+    // scaled up, and tucks it in while airborne so the player can clear enemies
+    // that the sprite visually clears.
+    void UpdateColliderFit(bool isGrounded, float visualScale)
+    {
+        if (!fitColliderToBikeBody)
+        {
+            return;
+        }
+
+        BoxCollider2D boxCollider = playerCollider as BoxCollider2D;
+        if (boxCollider == null)
+        {
+            return;
+        }
+
+        float compensate = idleScale / Mathf.Max(0.01f, visualScale);
+        Vector2 size = fittedColliderSize * compensate;
+        Vector2 offset = fittedColliderOffset * compensate;
+
+        if (!isGrounded)
+        {
+            size.x *= 0.74f;
+            size.y = Mathf.Max(0.4f, size.y - 0.24f);
+            offset.y += 0.12f;
+        }
+
+        boxCollider.size = size;
+        boxCollider.offset = offset;
     }
 
     bool IsGrounded()

@@ -222,11 +222,10 @@ public class GameOver : MonoBehaviour
             return;
         }
 
-        Collider2D playerCollider = player.GetComponent<Collider2D>();
-        if (IsPlayerInDamageZone(playerCollider))
-        {
-            GameOverPlayer(player);
-        }
+        // Any non-stomp contact hurts. The old "damage zone" compared the
+        // enemy's head to the player's CENTER, so side contact with a short
+        // slime did nothing at all.
+        GameOverPlayer(player);
     }
 
     bool TryHandleAttackHit(GameObject target, Vector3 hitSourcePosition)
@@ -241,6 +240,10 @@ public class GameOver : MonoBehaviour
         return true;
     }
 
+    // Honest Mario rule: a stomp means the player's FEET are at or above the
+    // enemy's head while falling. The old check used the player's center,
+    // which is always above a short slime, so walking into one sideways
+    // counted as a stomp and the player never got hurt.
     bool IsPlayerStomping(GameObject player, Collision2D collision)
     {
         Rigidbody2D playerRigidbody = player.GetComponent<Rigidbody2D>();
@@ -258,14 +261,9 @@ public class GameOver : MonoBehaviour
         bool playerOverlapsEnemyTop = playerBounds.max.x > enemyBounds.min.x + horizontalInset
             && playerBounds.min.x < enemyBounds.max.x - horizontalInset;
         bool playerFeetAreNearEnemyTop = playerBounds.min.y >= enemyBounds.max.y - margin;
-        bool playerBodyIsAboveEnemy = playerBounds.center.y >= enemyBounds.center.y;
-        bool playerBodyIsAboveEnemyTop = playerBounds.center.y >= enemyBounds.max.y;
         bool playerIsFallingOrLanding = playerRigidbody.linearVelocity.y <= LandingVelocityTolerance;
-        bool touchedUpperBody = HasUpperBodyContact(collision, enemyBounds, margin);
 
-        return playerOverlapsEnemyTop
-            && playerBodyIsAboveEnemy
-            && (touchedUpperBody || playerBodyIsAboveEnemyTop || (playerIsFallingOrLanding && playerFeetAreNearEnemyTop));
+        return playerOverlapsEnemyTop && playerFeetAreNearEnemyTop && playerIsFallingOrLanding;
     }
 
     bool IsPlayerInDamageZone(Collider2D playerCollider)
@@ -310,6 +308,11 @@ public class GameOver : MonoBehaviour
     float EffectiveStompMargin()
     {
         return Mathf.Max(stompCheckMargin, MinimumStompMargin);
+    }
+
+    public void DefeatBySpecial(Vector3 sourcePosition)
+    {
+        DefeatEnemy(null, sourcePosition);
     }
 
     void DefeatEnemy(GameObject player, Vector3 hitSourcePosition)
@@ -414,8 +417,8 @@ public class GameOver : MonoBehaviour
         }
 
         Bounds spriteBounds = spriteRenderer.sprite.bounds;
-        boxCollider.size = new Vector2(spriteBounds.size.x * 0.86f, spriteBounds.size.y * 0.58f);
-        boxCollider.offset = new Vector2(spriteBounds.center.x, spriteBounds.center.y - spriteBounds.extents.y * 0.22f);
+        boxCollider.size = new Vector2(spriteBounds.size.x * 0.78f, spriteBounds.size.y * 0.5f);
+        boxCollider.offset = new Vector2(spriteBounds.center.x, spriteBounds.center.y - spriteBounds.extents.y * 0.26f);
     }
 
     void StartIdleAnimation()
@@ -515,35 +518,21 @@ public class GameOver : MonoBehaviour
 
     void GameOverPlayer(GameObject player)
     {
-        if (isGameOver || isDefeated || !player.CompareTag("Player"))
+        if (isDefeated || !player.CompareTag("Player"))
         {
             return;
         }
 
-        isGameOver = true;
-
-        RetroSfx.PlayGameOver();
-        JuiceManager.Shake(0.5f);
-        JuiceManager.Burst(player.transform.position, new Color(1f, 0.35f, 0.3f), 16, 6f);
-
-        if (gameOverText != null)
+        // Star power: during FEVER, touching an enemy destroys it instead.
+        if (ScoreSystem.IsFever)
         {
-            gameOverText.SetActive(true);
-
-            Text text = gameOverText.GetComponent<Text>();
-            if (text != null)
-            {
-                text.text = "ゲームオーバーだよ";
-            }
-        }
-        else
-        {
-            showedImageBanner = EndBannerUI.Show("UI/GameOverBanner");
+            DefeatEnemy(player, player.transform.position);
+            return;
         }
 
-        GameSession.EndGame(player);
-
-        Debug.Log("ゲームオーバーだよ");
+        // No game-over screen: respawn at the last checkpoint.
+        RespawnSystem.KillPlayer(player);
+        return;
     }
 
     void SnapToGround()
