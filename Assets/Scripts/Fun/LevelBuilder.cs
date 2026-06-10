@@ -72,74 +72,90 @@ public static class LevelBuilder
     // 1-2: spikes, faster enemies, a hopper, a lift and the coin magnet.
     static void BuildStage2()
     {
+        PlaceGoalOnGround(96f);
         TuneExistingSlimes(1.3f, 3.2f, 0.5f);
 
+        // Act 1 (0-30): keep the learned opening mostly intact.
         SpawnSpikeOnGround(8f, 1.6f);
         SpawnSpikeOnGround(21f, 1.6f);
-        SpawnSpikeOnGround(35f, 1.8f);
 
         SpawnVariantOnGround(VariantEnemyKind.Togemaru, 11.8f, 0f, 0f, 0.7f);
         SpawnExtraSlime(16f, 3.2f, 3f, false);
         SpawnExtraSlime(30f, 2f, 2.5f, false);
-        SpawnExtraSlime(44f, 1.8f, 2f, true);
 
         if (IsFirstVisit(2))
         {
             SpawnHintOnGround(10.3f, "トゲボールは ふめない! Fで うとう!");
         }
 
-        SpawnLiftOnGround(33f, 1.6f, 2.6f, 3.4f);
-        SpawnSpringOnGround(38f);
         SpawnMagnetOnGround(25f, 1.3f);
-        SpawnCheckpointOnGround(26.5f);
+        SpawnCheckpointOnGround(25f);
 
         SpawnMedalOnGround(8f, 2.3f, 0);
         SpawnMedalOnGround(21f, 1.5f, 1);
-        SpawnMedalOnGround(33f, 4.4f, 2);
+
+        // Act 2 (30-65): formations.
+        SpawnShieldAndTurret(34f);
+        SpawnPincerHoppers(54f, 61f);
+        SpawnCheckpointOnGround(50f);
+
+        // Act 3 (65-85): thorn wave, crossed from above by two lifts.
+        SpawnSpikeWave(66f, 5, 1.2f, 2f);
+        SpawnLiftOnGround(66.6f, 2.1f, 2.2f, 2.8f);
+        SpawnLiftOnGround(73.4f, 2.3f, 2.4f, 2.6f);
+        SpawnCheckpointOnGround(75f);
+
+        SpawnRewardCoinArc(86f, 94f, 7, 2.2f);
+        SpawnMedalOnGround(91f, 2.6f, 2);
     }
 
     // 1-3: spike gauntlet, lots of fast and hopping slimes, two lifts.
     static void BuildStage3()
     {
+        PlaceGoalOnGround(96f);
         TuneExistingSlimes(1.6f, 4f, 0.25f);
 
+        // Act 1 (0-30): familiar spike/slime grammar.
         SpawnSpikeOnGround(6f, 2f);
         SpawnSpikeOnGround(14f, 2.2f);
         SpawnSpikeOnGround(20.4f, 2f);
-        SpawnSpikeOnGround(42.8f, 2.4f);
-        SpawnSpikeOnGround(47f, 2f);
-        // Final hurdle sits at 49.5 - at 52 it overlapped the goal flag and
-        // could kill the player on the goal line.
-        SpawnSpikeOnGround(49.5f, 2f);
-
         SpawnExtraSlime(23.4f, 3.6f, 3f, false);
         SpawnExtraSlime(26.8f, 2f, 2f, true);
-        SpawnExtraSlime(30.2f, 3.6f, 3.5f, false);
-        SpawnExtraSlime(33.6f, 2.2f, 2f, true);
-        SpawnExtraSlime(37f, 2.8f, 2.5f, false);
-        SpawnExtraSlime(50f, 2f, 1.5f, true);
         // Pettan guards the approach to the combo row from a safe distance.
         // Kabuton makes its proper debut in stage 5 instead - the combo row
         // already fills this stage's complexity budget.
         SpawnVariantOnGround(VariantEnemyKind.Pettan, 18.8f, 0f, 0f, 0.65f);
 
         SpawnLiftOnGround(20f, 1.6f, 3f, 3f);
-        SpawnLiftOnGround(42f, 1.6f, 3.2f, 2.6f);
         SpawnSpringOnGround(12f);
-        SpawnSpringOnGround(33f);
         SpawnMagnetOnGround(40f, 1.3f);
-        SpawnCheckpointOnGround(16.5f);
-        SpawnCheckpointOnGround(38.6f);
+        SpawnCheckpointOnGround(25f);
 
         SpawnMedalOnGround(12f, 4.6f, 0);
         SpawnMedalOnGround(20f, 4.4f, 1);
-        SpawnMedalOnGround(45f, 1.5f, 2);
+
+        // Act 2 (30-65): formations.
+        SpawnShieldAndTurret(34f);
+        SpawnPincerHoppers(49f, 56f);
+        SpawnCheckpointOnGround(50f);
+
+        // Act 3 (65-85): 8-stomp combo festival. Starts slightly before 65
+        // so the final enemy stays before the enemy-free reward lane.
+        for (int i = 0; i < 8; i++)
+        {
+            SpawnExtraSlime(58.6f + i * 3.4f, 2.4f, 1.2f, false);
+        }
+        SpawnCheckpointOnGround(84f);
+
+        SpawnRewardCoinArc(86f, 94f, 8, 2.5f);
+        SpawnMedalOnGround(91f, 2.7f, 2);
     }
 
     // 1-4: the cave. Deep darkness lit only by the player's lantern, torches
     // and the glow of magma pools. Teaches light-reading before the castle.
     static void BuildCaveStage()
     {
+        PlaceGoalOnGround(96f);
         CreateCaveDarkness();
         TuneExistingSlimes(1.45f, 3.6f, 0.4f);
 
@@ -165,30 +181,41 @@ public static class LevelBuilder
         SpawnMagmaOnGround(11f, 2.4f);
         SpawnMagmaOnGround(20f, 3f);
         SpawnMagmaOnGround(29f, 2.4f);
-        SpawnMagmaOnGround(36.5f, 3.6f);
 
         SpawnExtraSlime(14f, 2.6f, 2.2f, false);
         SpawnExtraSlime(26f, 2f, 1.8f, true);
-        SpawnExtraSlime(43f, 3f, 2.5f, false);
         SpawnBatkin(24.8f, 1.6f, 0f, 0f);
 
-        SpawnLiftOnGround(36.5f, 1.5f, 2.6f, 3f);
-        SpawnSpringOnGround(31f);
         SpawnMagnetOnGround(24f, 1.3f);
 
-        SpawnCheckpointOnGround(15.5f);
-        SpawnCheckpointOnGround(31.8f);
+        SpawnCheckpointOnGround(25f);
 
         if (IsFirstVisit(4))
         {
             SpawnHintOnGround(8.5f, "マグマに さわると やけど!");
-            SpawnHintOnGround(34f, "リフトで マグマを こえろ!");
+            SpawnHintOnGround(34f, "盾のうしろに 砲台! まず観察!");
         }
 
-        // Medals glow over the magma - beauty guarding treasure
+        // Medals glow over the magma - beauty guarding treasure.
         SpawnMedalOnGround(20f, 1.8f, 0);
         SpawnMedalOnGround(29f, 1.8f, 1);
-        SpawnMedalOnGround(36.5f, 4.6f, 2);
+
+        // Act 2 (30-65): formations.
+        SpawnShieldAndTurret(34f);
+        SpawnBatkinWave(44f);
+        SpawnPincerHoppers(57f, 63f);
+        SpawnCheckpointOnGround(50f);
+
+        // Act 3 (65-85): magma waterfall, lift -> spring -> lift.
+        SpawnMagmaOnGround(66f, 6f);
+        SpawnMagmaOnGround(75f, 6f);
+        SpawnLiftOnGround(63.5f, 1.7f, 2.5f, 2.8f);
+        SpawnSpringOnGround(70.5f);
+        SpawnLiftOnGround(79f, 1.8f, 2.8f, 2.8f);
+        SpawnCheckpointOnGround(84f);
+
+        SpawnRewardCoinArc(86f, 94f, 7, 2.7f);
+        SpawnMedalOnGround(91f, 3.1f, 2);
     }
 
     static void CreateCaveDarkness()
@@ -244,10 +271,11 @@ public static class LevelBuilder
     // a long death zone, and the King Slime boss guarding the goal.
     static void BuildBossStage()
     {
+        PlaceGoalOnGround(96f);
         CreateDarkOverlay();
         TuneExistingSlimes(1.8f, 5f, 0.15f);
 
-        // Rhythm section: evenly spaced spikes force precise jump timing
+        // Act 1 (0-30): keep the learned castle rhythm.
         SpawnSpikeOnGround(5f, 1.8f);
         SpawnSpikeOnGround(8.5f, 1.8f);
         SpawnSpikeOnGround(12f, 1.8f);
@@ -266,37 +294,41 @@ public static class LevelBuilder
         SpawnLiftOnGround(23f, 1.4f, 2.6f, 2.6f);
         SpawnLiftOnGround(28f, 1.4f, 2.8f, 2.4f);
 
-        // Last breath before the arena
-        SpawnSpikeOnGround(33.6f, 1.8f);
-        SpawnSpikeOnGround(37f, 1.8f);
-        // Old Togemaru at 35.7 sat in the 0.7-unit gap between the two
-        // spikes - physically impassable on the ground. Now a static gate
-        // guard before the arena. Kabuton is static so it no longer patrols
-        // over the checkpoint (38.5) and the spring (41). Batkin removed:
-        // boss globs + flying enemy + spring arcs was overload.
-        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 44.3f, 0f, 0f, 0.7f);
-        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 42.4f, 0f, 0f, 0.72f);
+        SpawnCheckpointOnGround(25f);
 
-        // Kabuton debuts here now (moved out of stage 3), so the shield
-        // lesson moves with it.
+        // Act 2 (30-65): formations.
+        SpawnShieldAndTurret(34f);
+        SpawnBatkinWave(45f);
+        SpawnPincerHoppers(57f, 63f);
+        SpawnCheckpointOnGround(50f);
+
         if (IsFirstVisit(5))
         {
-            SpawnHintOnGround(40.6f, "カブトンは まえが かたい! うえから ふもう!");
+            SpawnHintOnGround(33f, "カブトンは まえが かたい! うえから ふもう!");
         }
 
-        SpawnCheckpointOnGround(17f);
-        SpawnCheckpointOnGround(38.5f);
+        // Act 3 (65-85): two castle gates, then a final barrier trial.
+        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 66f, 0f, 0f, 0.7f);
+        SpawnSpikeOnGround(68f, 1.8f);
+        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 72f, 0f, 0f, 0.7f);
+        SpawnSpikeOnGround(74f, 1.8f);
+        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 80f, 0f, 0f, 0.72f);
+        SpawnLiftOnGround(82f, 1.7f, 2.4f, 2.6f);
+        SpawnCheckpointOnGround(70f);
+        SpawnCheckpointOnGround(84f);
 
+        // Reward lane before the boss arena: no normal enemies here.
+        SpawnRewardCoinArc(86f, 91f, 6, 2.2f);
         SpawnMedalOnGround(8.5f, 2.3f, 0);
         SpawnMedalOnGround(28f, 4.8f, 1);
-        SpawnMedalOnGround(47f, 3.6f, 2);
+        SpawnMedalOnGround(88f, 3.2f, 2);
 
         // Boss arena: barrier seals the goal until the King falls.
         // A spring lets the player bounce up for readable head stomps.
-        SpawnSpringOnGround(41f);
-        GameObject barrier = CreateBossBarrier(51f);
+        SpawnSpringOnGround(90f);
+        GameObject barrier = CreateBossBarrier(95f);
         Vector2 arenaGround;
-        if (CoinSpawner.TryFindGround(47f, out arenaGround))
+        if (CoinSpawner.TryFindGround(92f, out arenaGround))
         {
             BossSlime.Spawn(new Vector3(arenaGround.x, arenaGround.y + 2.5f, 0f), barrier);
         }
@@ -366,6 +398,79 @@ public static class LevelBuilder
         texture.Apply();
         solidSprite = Sprite.Create(texture, new Rect(0f, 0f, 4f, 4f), new Vector2(0.5f, 0.5f), 4f);
         return solidSprite;
+    }
+
+    static void PlaceGoalOnGround(float x)
+    {
+        Goal goal = Object.FindAnyObjectByType<Goal>();
+        if (goal == null)
+        {
+            return;
+        }
+
+        Vector2 newGroundPoint;
+        if (!CoinSpawner.TryFindGround(x, out newGroundPoint))
+        {
+            return;
+        }
+
+        Vector2 currentGroundPoint;
+        float yOffset = 1.45f;
+        if (CoinSpawner.TryFindGround(goal.transform.position.x, out currentGroundPoint))
+        {
+            yOffset = goal.transform.position.y - currentGroundPoint.y;
+        }
+
+        goal.transform.position = new Vector3(newGroundPoint.x, newGroundPoint.y + yOffset, goal.transform.position.z);
+    }
+
+    static void SpawnShieldAndTurret(float frontX)
+    {
+        SpawnVariantOnGround(VariantEnemyKind.Kabuton, frontX, 0f, 0f, 0.72f);
+        SpawnVariantOnGround(VariantEnemyKind.Pettan, frontX + 2.5f, 0f, 0f, 0.65f);
+    }
+
+    static void SpawnBatkinWave(float startX)
+    {
+        SpawnBatkin(startX, 1.35f, 1.1f, 1.6f);
+        SpawnBatkin(startX + 3f, 2.05f, 1.15f, 1.8f);
+        SpawnBatkin(startX + 6f, 1.65f, 1.2f, 1.8f);
+    }
+
+    static void SpawnPincerHoppers(float leftX, float rightX)
+    {
+        SpawnExtraSlime(leftX, 2.6f, 2.1f, true);
+        SpawnExtraSlime(rightX, 2.6f, 2.1f, true);
+    }
+
+    static void SpawnSpikeWave(float startX, int count, float spacing, float width)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            SpawnSpikeOnGround(startX + i * spacing, width);
+        }
+    }
+
+    static void SpawnRewardCoinArc(float startX, float endX, int count, float height)
+    {
+        if (count <= 1)
+        {
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            float t = i / (float)(count - 1);
+            float x = Mathf.Lerp(startX, endX, t);
+            Vector2 groundPoint;
+            if (!CoinSpawner.TryFindGround(x, out groundPoint))
+            {
+                continue;
+            }
+
+            float arc = Mathf.Sin(t * Mathf.PI) * height;
+            Coin.Spawn(new Vector3(groundPoint.x, groundPoint.y + 1.25f + arc, 0f));
+        }
     }
 
     static void TuneExistingSlimes(float speedMultiplier, float moveSeconds, float pauseSeconds)
