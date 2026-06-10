@@ -23,6 +23,7 @@ public static class ScoreSystem
     static float comboEndTime;
     static float feverEndTime;
     static float magnetEndTime;
+    static bool[] medalsThisRun = new bool[3];
 
     public static bool IsFever => GameSession.HasStarted && Time.time < feverEndTime;
     public static bool MagnetActive => GameSession.HasStarted && !GameSession.HasEnded && Time.time < magnetEndTime;
@@ -43,6 +44,7 @@ public static class ScoreSystem
         comboEndTime = 0f;
         feverEndTime = 0f;
         magnetEndTime = 0f;
+        medalsThisRun = new bool[3];
         ScorePopTime = -10f;
     }
 
@@ -122,6 +124,60 @@ public static class ScoreSystem
         magnetEndTime = Time.time + seconds;
     }
 
+    // --- Star medals (kept only when the stage is cleared) ---
+
+    public static bool IsMedalRunCollected(int index)
+    {
+        return index >= 0 && index < medalsThisRun.Length && medalsThisRun[index];
+    }
+
+    public static bool IsMedalOwned(int stage, int index)
+    {
+        return (PlayerPrefs.GetInt("RungameMedals_S" + stage, 0) & (1 << index)) != 0;
+    }
+
+    public static int OwnedMedalCount(int stage)
+    {
+        int mask = PlayerPrefs.GetInt("RungameMedals_S" + stage, 0);
+        int count = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            if ((mask & (1 << i)) != 0)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int TotalMedals
+    {
+        get
+        {
+            int total = 0;
+            for (int stage = 1; stage <= LevelManager.MaxStage; stage++)
+            {
+                total += OwnedMedalCount(stage);
+            }
+            return total;
+        }
+    }
+
+    public static void CollectMedal(int index, bool ownedBefore, Vector3 position)
+    {
+        if (index >= 0 && index < medalsThisRun.Length)
+        {
+            medalsThisRun[index] = true;
+        }
+
+        AddScore(500);
+        RetroSfx.PlayMedal();
+        JuiceManager.Burst(position, new Color(1f, 0.88f, 0.35f), 14, 6f);
+        JuiceManager.Shake(0.15f);
+        JuiceManager.Popup(position + Vector3.up * 0.8f,
+            ownedBefore ? "+500" : "スターメダル!!", new Color(1f, 0.88f, 0.35f), 1.3f);
+    }
+
     public static void OnGoal(float clearTime)
     {
         int timeBonus = Mathf.Max(0, Mathf.RoundToInt((90f - clearTime) * 25f));
@@ -166,6 +222,18 @@ public static class ScoreSystem
         {
             PlayerPrefs.SetInt(rankKey, rankValue);
         }
+
+        // Star-coin rule: medals are only kept when you reach the goal
+        string medalKey = "RungameMedals_S" + stage;
+        int medalMask = PlayerPrefs.GetInt(medalKey, 0);
+        for (int i = 0; i < medalsThisRun.Length; i++)
+        {
+            if (medalsThisRun[i])
+            {
+                medalMask |= 1 << i;
+            }
+        }
+        PlayerPrefs.SetInt(medalKey, medalMask);
 
         PlayerPrefs.Save();
     }

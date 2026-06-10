@@ -222,11 +222,10 @@ public class GameOver : MonoBehaviour
             return;
         }
 
-        Collider2D playerCollider = player.GetComponent<Collider2D>();
-        if (IsPlayerInDamageZone(playerCollider))
-        {
-            GameOverPlayer(player);
-        }
+        // Any non-stomp contact hurts. The old "damage zone" compared the
+        // enemy's head to the player's CENTER, so side contact with a short
+        // slime did nothing at all.
+        GameOverPlayer(player);
     }
 
     bool TryHandleAttackHit(GameObject target, Vector3 hitSourcePosition)
@@ -241,6 +240,10 @@ public class GameOver : MonoBehaviour
         return true;
     }
 
+    // Honest Mario rule: a stomp means the player's FEET are at or above the
+    // enemy's head while falling. The old check used the player's center,
+    // which is always above a short slime, so walking into one sideways
+    // counted as a stomp and the player never got hurt.
     bool IsPlayerStomping(GameObject player, Collision2D collision)
     {
         Rigidbody2D playerRigidbody = player.GetComponent<Rigidbody2D>();
@@ -258,14 +261,9 @@ public class GameOver : MonoBehaviour
         bool playerOverlapsEnemyTop = playerBounds.max.x > enemyBounds.min.x + horizontalInset
             && playerBounds.min.x < enemyBounds.max.x - horizontalInset;
         bool playerFeetAreNearEnemyTop = playerBounds.min.y >= enemyBounds.max.y - margin;
-        bool playerBodyIsAboveEnemy = playerBounds.center.y >= enemyBounds.center.y;
-        bool playerBodyIsAboveEnemyTop = playerBounds.center.y >= enemyBounds.max.y;
         bool playerIsFallingOrLanding = playerRigidbody.linearVelocity.y <= LandingVelocityTolerance;
-        bool touchedUpperBody = HasUpperBodyContact(collision, enemyBounds, margin);
 
-        return playerOverlapsEnemyTop
-            && playerBodyIsAboveEnemy
-            && (touchedUpperBody || playerBodyIsAboveEnemyTop || (playerIsFallingOrLanding && playerFeetAreNearEnemyTop));
+        return playerOverlapsEnemyTop && playerFeetAreNearEnemyTop && playerIsFallingOrLanding;
     }
 
     bool IsPlayerInDamageZone(Collider2D playerCollider)
@@ -419,8 +417,8 @@ public class GameOver : MonoBehaviour
         }
 
         Bounds spriteBounds = spriteRenderer.sprite.bounds;
-        boxCollider.size = new Vector2(spriteBounds.size.x * 0.86f, spriteBounds.size.y * 0.58f);
-        boxCollider.offset = new Vector2(spriteBounds.center.x, spriteBounds.center.y - spriteBounds.extents.y * 0.22f);
+        boxCollider.size = new Vector2(spriteBounds.size.x * 0.78f, spriteBounds.size.y * 0.5f);
+        boxCollider.offset = new Vector2(spriteBounds.center.x, spriteBounds.center.y - spriteBounds.extents.y * 0.26f);
     }
 
     void StartIdleAnimation()

@@ -56,9 +56,33 @@ public class ScoreHud : MonoBehaviour
 
     void DrawStageLabel(float scale)
     {
-        infoStyle.fontSize = Mathf.RoundToInt(26f * scale);
-        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 154f) * scale, 400f * scale, 32f * scale);
+        infoStyle.fontSize = Mathf.RoundToInt(24f * scale);
+        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 90f) * scale, 320f * scale, 32f * scale);
         DrawOutlined(rect, "STAGE " + LevelManager.StageLabel, infoStyle, new Color(0.85f, 0.95f, 0.85f));
+
+        // Star medals: gold = grabbed this run, blue = already owned, dark = missing
+        TextAnchor original = infoStyle.alignment;
+        infoStyle.alignment = TextAnchor.UpperLeft;
+        for (int i = 0; i < 3; i++)
+        {
+            Color starColor;
+            if (ScoreSystem.IsMedalRunCollected(i))
+            {
+                starColor = new Color(1f, 0.85f, 0.25f);
+            }
+            else if (ScoreSystem.IsMedalOwned(LevelManager.CurrentStage, i))
+            {
+                starColor = new Color(0.6f, 0.8f, 1f);
+            }
+            else
+            {
+                starColor = new Color(0.4f, 0.4f, 0.45f);
+            }
+
+            Rect starRect = new Rect(Screen.width - (88f - i * 26f) * scale, (18f + 90f) * scale, 30f * scale, 32f * scale);
+            DrawOutlined(starRect, "★", infoStyle, starColor);
+        }
+        infoStyle.alignment = original;
     }
 
     void DrawStageIntro(float scale)
@@ -120,7 +144,7 @@ public class ScoreHud : MonoBehaviour
         }
 
         infoStyle.fontSize = Mathf.RoundToInt(22f * scale);
-        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 218f) * scale, 400f * scale, 30f * scale);
+        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 124f) * scale, 400f * scale, 30f * scale);
         DrawOutlined(rect, "ミス ×" + RespawnSystem.Deaths, infoStyle, new Color(1f, 0.6f, 0.55f));
     }
 
@@ -132,10 +156,13 @@ public class ScoreHud : MonoBehaviour
         }
 
         infoStyle.fontSize = Mathf.RoundToInt(22f * scale);
-        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 186f) * scale, 400f * scale, 30f * scale);
+        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 154f) * scale, 400f * scale, 30f * scale);
         DrawOutlined(rect, "マグネット " + ScoreSystem.MagnetTimeLeft.ToString("0.0"), infoStyle, new Color(0.45f, 0.9f, 1f));
     }
 
+    // A deliberately small HUD column: score, the W gauge, stage + medals.
+    // Coin count and best time were cut - the score and the title screen
+    // already carry that information.
     void DrawScore(float scale)
     {
         float pop = Mathf.Clamp01(1f - (Time.unscaledTime - ScoreSystem.ScorePopTime) / 0.25f);
@@ -144,18 +171,7 @@ public class ScoreHud : MonoBehaviour
         DrawOutlined(scoreRect, "SCORE " + ScoreSystem.Score.ToString("N0"), scoreStyle, new Color(1f, 0.93f, 0.45f));
 
         infoStyle.fontSize = Mathf.RoundToInt(24f * scale);
-        Rect coinRect = new Rect(Screen.width - 420f * scale, (18f + 58f) * scale, 400f * scale, 32f * scale);
-        DrawOutlined(coinRect, "COIN x " + ScoreSystem.CoinsCollected, infoStyle, new Color(1f, 0.8f, 0.3f));
-
-        float best = ScoreSystem.BestTime;
-        if (best > 0f)
-        {
-            Rect bestRect = new Rect(Screen.width - 420f * scale, (18f + 90f) * scale, 400f * scale, 30f * scale);
-            DrawOutlined(bestRect, "BEST " + FormatTime(best), infoStyle, new Color(0.7f, 0.95f, 1f));
-        }
-
-        infoStyle.fontSize = Mathf.RoundToInt(24f * scale);
-        Rect specialRect = new Rect(Screen.width - 420f * scale, (18f + 122f) * scale, 400f * scale, 32f * scale);
+        Rect specialRect = new Rect(Screen.width - 420f * scale, (18f + 58f) * scale, 400f * scale, 32f * scale);
         if (ScoreSystem.SpecialReady)
         {
             Color rainbow = Color.HSVToRGB(Mathf.Repeat(Time.unscaledTime * 1.8f, 1f), 0.7f, 1f);
@@ -234,7 +250,17 @@ public class ScoreHud : MonoBehaviour
             DrawRankStamp(scale);
             bigStyle.fontSize = Mathf.RoundToInt(34f * scale);
             Rect timeRect = new Rect(0f, Screen.height - 124f * scale, Screen.width, 46f * scale);
+            int runMedals = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                if (ScoreSystem.IsMedalRunCollected(i))
+                {
+                    runMedals++;
+                }
+            }
+
             string result = "タイム " + FormatTime(GameSession.ElapsedTime) + "   スコア " + ScoreSystem.Score.ToString("N0");
+            result += "   ★" + runMedals + "/3";
             result += RespawnSystem.Deaths > 0 ? "   ミス ×" + RespawnSystem.Deaths : "   ノーミス!";
             DrawOutlined(timeRect, result, bigStyle, Color.white);
 

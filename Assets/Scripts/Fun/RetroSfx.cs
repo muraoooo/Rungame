@@ -8,6 +8,10 @@ public static class RetroSfx
     static AudioSource musicSource;
     static AudioClip titleMusicClip;
     static AudioClip endingMusicClip;
+    static AudioClip fieldMusicClip;
+    static AudioClip caveMusicClip;
+    static AudioClip castleMusicClip;
+    static AudioClip medalClip;
     static AudioClip fireworkClip;
     static AudioClip jumpClip;
     static AudioClip coinClip;
@@ -161,6 +165,56 @@ public static class RetroSfx
         }
 
         StartMusic(endingMusicClip, 0.55f);
+    }
+
+    public static void PlayStageMusic(int stage)
+    {
+        AudioClip clip;
+
+        if (stage >= 5)
+        {
+            // Castle: tense low ostinato
+            if (castleMusicClip == null)
+            {
+                float[] notes = { 196f, 196f, 233f, 196f, 175f, 196f, 147f, 165f };
+                castleMusicClip = SynthMelody("Music_Castle", notes, 0.27f, 0.15f, true);
+            }
+            clip = castleMusicClip;
+        }
+        else if (stage == 4)
+        {
+            // Cave: slow, mysterious, soft sine
+            if (caveMusicClip == null)
+            {
+                float[] notes = { 330f, 392f, 440f, 494f, 554f, 494f, 440f, 392f };
+                caveMusicClip = SynthMelody("Music_Cave", notes, 0.5f, 0.12f, false);
+            }
+            clip = caveMusicClip;
+        }
+        else
+        {
+            // Field: bright and bouncy
+            if (fieldMusicClip == null)
+            {
+                float[] notes = { 523f, 587f, 659f, 784f, 659f, 587f, 523f, 392f,
+                                  440f, 523f, 659f, 880f, 784f, 659f, 587f, 523f };
+                fieldMusicClip = SynthMelody("Music_Field", notes, 0.18f, 0.15f, true);
+            }
+            clip = fieldMusicClip;
+        }
+
+        StartMusic(clip, 0.45f);
+    }
+
+    public static void PlayMedal()
+    {
+        if (medalClip == null)
+        {
+            float[] notes = { 784f, 988f, 1319f };
+            medalClip = SynthArpeggio("Sfx_Medal", notes, 0.09f, 0.32f, 0.35f);
+        }
+
+        Play(medalClip);
     }
 
     public static void StopMusic()

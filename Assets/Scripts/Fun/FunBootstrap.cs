@@ -47,6 +47,7 @@ public class FunBootstrap : MonoBehaviour
             manager.AddComponent<RestartController>();
             manager.AddComponent<OpeningDirector>();
             manager.AddComponent<EndingDirector>();
+            manager.AddComponent<MusicDirector>();
         }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");

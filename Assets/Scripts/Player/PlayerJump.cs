@@ -51,7 +51,7 @@ public class PlayerJump : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         rb2d.constraints |= RigidbodyConstraints2D.FreezeRotation;
         rb2d.gravityScale = gravityScale;
-        jumpPower = Mathf.Max(jumpPower, 9f);
+        jumpPower = Mathf.Max(jumpPower, 10f);
         playerCollider = GetComponent<Collider2D>();
         FitColliderToBikeBodyIfNeeded();
         spriteRenderer = GetComponent<SpriteRenderer>();

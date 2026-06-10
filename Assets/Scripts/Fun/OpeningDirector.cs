@@ -35,11 +35,7 @@ public class OpeningDirector : MonoBehaviour
     {
         if (GameSession.HasStarted)
         {
-            if (musicStarted)
-            {
-                musicStarted = false;
-                RetroSfx.StopMusic();
-            }
+            // MusicDirector takes over and swaps in the stage tune.
             return;
         }
 
@@ -242,6 +238,15 @@ public class OpeningDirector : MonoBehaviour
         float y = 24f * scale;
         bool anyRecord = false;
 
+        int totalMedals = ScoreSystem.TotalMedals;
+        if (totalMedals > 0)
+        {
+            DrawOutlinedAt(new Rect(width - 320f * scale, y, 300f * scale, 30f * scale),
+                "スターメダル ★ " + totalMedals + " / " + LevelManager.MaxStage * 3,
+                new Color(1f, 0.85f, 0.25f), scale, TextAnchor.MiddleRight);
+            y += 34f * scale;
+        }
+
         for (int stage = 1; stage <= LevelManager.MaxStage; stage++)
         {
             float best = PlayerPrefs.GetFloat("RungameBestTime_S" + stage, 0f);
@@ -260,8 +265,10 @@ public class OpeningDirector : MonoBehaviour
 
             int minutes = Mathf.FloorToInt(best / 60f);
             string rank = ScoreSystem.BestRank(stage);
+            int medals = ScoreSystem.OwnedMedalCount(stage);
             string text = "1-" + stage + "  " + minutes.ToString("00") + ":" + (best - minutes * 60f).ToString("00.00")
-                + (string.IsNullOrEmpty(rank) ? "" : "  [" + rank + "]");
+                + (string.IsNullOrEmpty(rank) ? "" : "  [" + rank + "]")
+                + (medals > 0 ? "  ★" + medals : "");
             Color rowColor = string.IsNullOrEmpty(rank) ? Color.white : ScoreSystem.RankColor(rank);
             DrawOutlinedAt(new Rect(width - 320f * scale, y, 300f * scale, 30f * scale),
                 text, rowColor, scale, TextAnchor.MiddleRight);

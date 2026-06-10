@@ -29,8 +29,24 @@ public static class LevelBuilder
     // 1-1: the original gentle layout, plus a spring to teach bouncing.
     static void BuildStage1()
     {
+        // A tight coin row right at the start so the W special is charged
+        // within the first seconds - the player tastes the big move early.
+        for (int i = 0; i < 5; i++)
+        {
+            Vector2 starterGround;
+            float x = -6.4f + i * 0.8f;
+            if (CoinSpawner.TryFindGround(x, out starterGround))
+            {
+                Coin.Spawn(new Vector3(starterGround.x, starterGround.y + 0.95f, 0f));
+            }
+        }
+
         SpawnSpringOnGround(18f);
         SpawnCheckpointOnGround(24f);
+
+        SpawnMedalOnGround(13f, 2.9f, 0);
+        SpawnMedalOnGround(27f, 3f, 1);
+        SpawnMedalOnGround(41f, 3f, 2);
 
         // First-timers get contextual coaching; veterans (anyone with a
         // recorded clear) never see these.
@@ -62,6 +78,10 @@ public static class LevelBuilder
         SpawnSpringOnGround(38f);
         SpawnMagnetOnGround(25f, 1.3f);
         SpawnCheckpointOnGround(26.5f);
+
+        SpawnMedalOnGround(8f, 3f, 0);
+        SpawnMedalOnGround(21f, 1.5f, 1);
+        SpawnMedalOnGround(33f, 4.4f, 2);
     }
 
     // 1-3: spike gauntlet, lots of fast and hopping slimes, two lifts.
@@ -90,6 +110,10 @@ public static class LevelBuilder
         SpawnMagnetOnGround(40f, 1.3f);
         SpawnCheckpointOnGround(16.5f);
         SpawnCheckpointOnGround(33.5f);
+
+        SpawnMedalOnGround(12f, 4.6f, 0);
+        SpawnMedalOnGround(20f, 4.4f, 1);
+        SpawnMedalOnGround(45f, 1.5f, 2);
     }
 
     // 1-4: the cave. Deep darkness lit only by the player's lantern, torches
@@ -139,6 +163,11 @@ public static class LevelBuilder
             SpawnHintOnGround(8.5f, "マグマに さわると やけど!");
             SpawnHintOnGround(34f, "リフトで マグマを こえろ!");
         }
+
+        // Medals glow over the magma - beauty guarding treasure
+        SpawnMedalOnGround(20f, 1.8f, 0);
+        SpawnMedalOnGround(29f, 1.8f, 1);
+        SpawnMedalOnGround(36.5f, 4.6f, 2);
     }
 
     static void CreateCaveDarkness()
@@ -159,6 +188,15 @@ public static class LevelBuilder
         if (CoinSpawner.TryFindGround(x, out groundPoint))
         {
             MagmaPool.Spawn(groundPoint, width);
+        }
+    }
+
+    static void SpawnMedalOnGround(float x, float aboveGround, int index)
+    {
+        Vector2 groundPoint;
+        if (CoinSpawner.TryFindGround(x, out groundPoint))
+        {
+            StarMedal.Spawn(new Vector3(groundPoint.x, groundPoint.y + aboveGround, 0f), index);
         }
     }
 
@@ -208,6 +246,10 @@ public static class LevelBuilder
 
         SpawnCheckpointOnGround(17f);
         SpawnCheckpointOnGround(38.5f);
+
+        SpawnMedalOnGround(8.5f, 3.2f, 0);
+        SpawnMedalOnGround(28f, 4.8f, 1);
+        SpawnMedalOnGround(47f, 3.6f, 2);
 
         // Boss arena: barrier seals the goal until the King falls.
         // A spring lets the player bounce up for readable head stomps.
