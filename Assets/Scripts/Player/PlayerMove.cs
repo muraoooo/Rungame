@@ -7,6 +7,8 @@ public class PlayerMove : MonoBehaviour
     public float ledgeAssistHeight = 0.75f;
     public float ledgeAssistForward = 0.28f;
 
+    [System.NonSerialized] public float externalSpeedMultiplier = 1f;
+
     Rigidbody2D rb2d;
     Collider2D playerCollider;
     SpriteRenderer spriteRenderer;
@@ -64,13 +66,15 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
+        float effectiveSpeed = speed * externalSpeedMultiplier * ScoreSystem.SpeedMultiplier;
+
         if (rb2d == null)
         {
-            transform.position += new Vector3(inputX * speed * Time.fixedDeltaTime, 0, 0);
+            transform.position += new Vector3(inputX * effectiveSpeed * Time.fixedDeltaTime, 0, 0);
             return;
         }
 
-        rb2d.linearVelocity = new Vector2(inputX * speed, rb2d.linearVelocity.y);
+        rb2d.linearVelocity = new Vector2(inputX * effectiveSpeed, rb2d.linearVelocity.y);
         TryAssistOntoPlatform();
     }
 

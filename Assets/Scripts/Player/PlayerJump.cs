@@ -29,6 +29,10 @@ public class PlayerJump : MonoBehaviour
     bool isAcrobatVisual;
     bool useRideVisualAfterAcrobat;
     bool spaceJumpLocked;
+    bool wasGroundedLastFrame;
+    float lastGroundedTime = -10f;
+    float jumpPressedTime = -10f;
+    float lastVerticalVelocity;
     float jumpVisualStartTime;
     float acrobatVisualStartTime;
     float acrobatVisualEndTime;
@@ -39,6 +43,8 @@ public class PlayerJump : MonoBehaviour
     const float AcrobatVisualSeconds = 0.68f;
     const float AcrobatJumpMultiplier = 1.55f;
     const float AcrobatJumpGravityGraceSeconds = 0.38f;
+    const float CoyoteSeconds = 0.1f;
+    const float JumpBufferSeconds = 0.12f;
 
     void Start()
     {
@@ -85,6 +91,20 @@ public class PlayerJump : MonoBehaviour
 
         UpdateSpaceJumpLock(isGrounded);
 
+        if (isGrounded)
+        {
+            lastGroundedTime = Time.time;
+        }
+
+        if (isGrounded && !wasGroundedLastFrame && lastVerticalVelocity < -3f)
+        {
+            JuiceManager.Dust(new Vector3(playerCollider.bounds.center.x, playerCollider.bounds.min.y, 0f), 7);
+            JuiceManager.Shake(0.08f);
+        }
+
+        wasGroundedLastFrame = isGrounded;
+        lastVerticalVelocity = rb2d.linearVelocity.y;
+
         if (animator != null && !isJumpVisual && !isAcrobatVisual && !useRideVisualAfterAcrobat)
         {
             animator.SetBool("IsGrounded", isGrounded);
@@ -104,8 +124,20 @@ public class PlayerJump : MonoBehaviour
             return;
         }
 
-        if (keyboard.spaceKey.wasPressedThisFrame && isGrounded && !spaceJumpLocked)
+        if (keyboard.spaceKey.wasPressedThisFrame)
         {
+            jumpPressedTime = Time.time;
+        }
+
+        bool jumpBuffered = Time.time <= jumpPressedTime + JumpBufferSeconds;
+        bool groundAvailable = isGrounded || Time.time <= lastGroundedTime + CoyoteSeconds;
+
+        if (jumpBuffered && groundAvailable && !spaceJumpLocked)
+        {
+            jumpPressedTime = -10f;
+            lastGroundedTime = -10f;
+            RetroSfx.PlayJump();
+            JuiceManager.Dust(new Vector3(playerCollider.bounds.center.x, playerCollider.bounds.min.y, 0f), 5);
             rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x, jumpPower);
             rb2d.gravityScale = gravityScale;
             spaceJumpLocked = true;
@@ -140,6 +172,9 @@ public class PlayerJump : MonoBehaviour
 
             rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x, Mathf.Max(rb2d.linearVelocity.y + jumpPower * 0.45f, acrobatJumpSpeed));
             rb2d.gravityScale = gravityScale;
+            ScoreSystem.AddTrick(transform.position);
+            RetroSfx.PlayTrick();
+            JuiceManager.Burst(transform.position, new Color(0.45f, 0.9f, 1f), 10, 4.5f);
             canAcrobat = false;
             isJumpVisual = false;
             isAcrobatVisual = true;

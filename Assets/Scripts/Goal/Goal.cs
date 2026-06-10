@@ -62,6 +62,11 @@ public class Goal : MonoBehaviour
         }
 
         GameSession.EndGame(player, true);
+        ScoreSystem.OnGoal(GameSession.ElapsedTime);
+        RetroSfx.PlayFanfare();
+        JuiceManager.Shake(0.35f);
+        JuiceManager.Confetti(transform.position + Vector3.up * 2f, 70);
+        JuiceManager.Confetti(player.transform.position + Vector3.up * 1.5f, 40);
     }
 
     void SnapToGround()
