@@ -48,6 +48,7 @@ public class ScoreHud : MonoBehaviour
         DrawCombo(scale);
         DrawFever(scale);
         DrawMagnet(scale);
+        DrawDeaths(scale);
         DrawBossHealth(scale);
         DrawStartHint(scale);
         DrawEndPanel(scale);
@@ -108,6 +109,18 @@ public class ScoreHud : MonoBehaviour
         string hearts = new string('★', boss.Health) + new string('☆', boss.maxHealth - boss.Health);
         Rect rect = new Rect(0f, 150f * scale, Screen.width, 50f * scale);
         DrawOutlined(rect, "キングスライム " + hearts, bigStyle, new Color(1f, 0.45f, 0.85f));
+    }
+
+    void DrawDeaths(float scale)
+    {
+        if (RespawnSystem.Deaths <= 0)
+        {
+            return;
+        }
+
+        infoStyle.fontSize = Mathf.RoundToInt(22f * scale);
+        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 218f) * scale, 400f * scale, 30f * scale);
+        DrawOutlined(rect, "ミス ×" + RespawnSystem.Deaths, infoStyle, new Color(1f, 0.6f, 0.55f));
     }
 
     void DrawMagnet(float scale)
@@ -219,7 +232,9 @@ public class ScoreHud : MonoBehaviour
         {
             bigStyle.fontSize = Mathf.RoundToInt(34f * scale);
             Rect timeRect = new Rect(0f, Screen.height - 124f * scale, Screen.width, 46f * scale);
-            DrawOutlined(timeRect, "タイム " + FormatTime(GameSession.ElapsedTime) + "   スコア " + ScoreSystem.Score.ToString("N0"), bigStyle, Color.white);
+            string result = "タイム " + FormatTime(GameSession.ElapsedTime) + "   スコア " + ScoreSystem.Score.ToString("N0");
+            result += RespawnSystem.Deaths > 0 ? "   ミス ×" + RespawnSystem.Deaths : "   ノーミス!";
+            DrawOutlined(timeRect, result, bigStyle, Color.white);
 
             if (ScoreSystem.NewRecord)
             {

@@ -105,6 +105,13 @@ public static class ScoreSystem
         JuiceManager.Popup(position, label + " +" + points, new Color(1f, 0.9f, 0.3f), 1.3f);
     }
 
+    public static void BreakCombo()
+    {
+        Combo = 0;
+        comboEndTime = 0f;
+        feverEndTime = 0f;
+    }
+
     public static void ActivateMagnet(float seconds)
     {
         magnetEndTime = Time.time + seconds;

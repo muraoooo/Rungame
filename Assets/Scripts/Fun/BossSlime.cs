@@ -305,11 +305,7 @@ public class BossSlime : MonoBehaviour
 
     void KillPlayer(GameObject playerObject)
     {
-        RetroSfx.PlayGameOver();
-        JuiceManager.Shake(0.5f);
-        JuiceManager.Burst(playerObject.transform.position, new Color(1f, 0.35f, 0.3f), 16, 6f);
-        EndBannerUI.Show("UI/GameOverBanner");
-        GameSession.EndGame(playerObject);
+        RespawnSystem.KillPlayer(playerObject);
     }
 
     void OnTriggerEnter2D(Collider2D other)

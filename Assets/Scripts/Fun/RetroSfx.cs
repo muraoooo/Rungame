@@ -22,6 +22,7 @@ public static class RetroSfx
     static AudioClip specialBoomClip;
     static AudioClip springClip;
     static AudioClip roarClip;
+    static AudioClip hurtClip;
 
     public static void PlayJump()
     {
@@ -228,6 +229,17 @@ public static class RetroSfx
         }
 
         Play(fireworkClip);
+    }
+
+    public static void PlayHurt()
+    {
+        if (hurtClip == null)
+        {
+            hurtClip = SynthClip("Sfx_Hurt", 0.28f, time =>
+                Square(SweepPhase(time, 520f, 130f, 0.28f)) * Decay(time, 0.28f) * 0.3f);
+        }
+
+        Play(hurtClip);
     }
 
     public static void PlayRoar()

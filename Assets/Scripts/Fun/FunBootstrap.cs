@@ -52,6 +52,13 @@ public class FunBootstrap : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
+            RespawnSystem.Reset(player.transform.position);
+
+            if (player.GetComponent<PlayerBlinker>() == null)
+            {
+                player.AddComponent<PlayerBlinker>();
+            }
+
             if (player.GetComponent<PlayerDash>() == null)
             {
                 player.AddComponent<PlayerDash>();

@@ -19,6 +19,15 @@ public class RestartController : MonoBehaviour
             return;
         }
 
+        // ESC returns to the title screen
+        if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame && GameSession.HasStarted)
+        {
+            Time.timeScale = 1f;
+            EndBannerUI.Clear();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            return;
+        }
+
         if (keyboard != null && GameSession.HasEnded
             && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame))
         {
@@ -60,6 +69,12 @@ public class RestartController : MonoBehaviour
 
     void Restart()
     {
+        // Retries jump straight into gameplay - no title screen friction.
+        if (GameSession.HasStarted)
+        {
+            LevelManager.RequestAutoStart();
+        }
+
         Time.timeScale = 1f;
         EndBannerUI.Clear();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -86,10 +101,6 @@ public class RestartController : MonoBehaviour
             return;
         }
 
-        fellHandled = true;
-        RetroSfx.PlayGameOver();
-        JuiceManager.Shake(0.4f);
-        EndBannerUI.Show("UI/GameOverBanner");
-        GameSession.EndGame(player.gameObject);
+        RespawnSystem.KillPlayer(player.gameObject);
     }
 }

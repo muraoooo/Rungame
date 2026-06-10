@@ -27,6 +27,7 @@ public static class LevelBuilder
     static void BuildStage1()
     {
         SpawnSpringOnGround(18f);
+        SpawnCheckpointOnGround(24f);
     }
 
     // 1-2: spikes, faster enemies, a hopper, a lift and the coin magnet.
@@ -45,6 +46,7 @@ public static class LevelBuilder
         SpawnLiftOnGround(33f, 1.6f, 2.6f, 3.4f);
         SpawnSpringOnGround(38f);
         SpawnMagnetOnGround(25f, 1.3f);
+        SpawnCheckpointOnGround(26.5f);
     }
 
     // 1-3: spike gauntlet, lots of fast and hopping slimes, two lifts.
@@ -71,6 +73,8 @@ public static class LevelBuilder
         SpawnSpringOnGround(12f);
         SpawnSpringOnGround(33f);
         SpawnMagnetOnGround(40f, 1.3f);
+        SpawnCheckpointOnGround(16.5f);
+        SpawnCheckpointOnGround(33.5f);
     }
 
     // 1-4: the castle. Dark mood, precision spike rhythm, a lift crossing over
@@ -103,7 +107,12 @@ public static class LevelBuilder
         SpawnSpikeOnGround(34.5f, 1.8f);
         SpawnSpikeOnGround(37f, 1.8f);
 
-        // Boss arena: barrier seals the goal until the King falls
+        SpawnCheckpointOnGround(17f);
+        SpawnCheckpointOnGround(38.5f);
+
+        // Boss arena: barrier seals the goal until the King falls.
+        // A spring lets the player bounce up for readable head stomps.
+        SpawnSpringOnGround(41f);
         GameObject barrier = CreateBossBarrier(51f);
         Vector2 arenaGround;
         if (CoinSpawner.TryFindGround(47f, out arenaGround))
@@ -237,6 +246,15 @@ public static class LevelBuilder
         if (CoinSpawner.TryFindGround(x, out groundPoint))
         {
             MovingPlatform.Spawn(new Vector3(groundPoint.x, groundPoint.y + aboveGround, 0f), amplitude, period);
+        }
+    }
+
+    static void SpawnCheckpointOnGround(float x)
+    {
+        Vector2 groundPoint;
+        if (CoinSpawner.TryFindGround(x, out groundPoint))
+        {
+            CheckpointFlag.Spawn(groundPoint);
         }
     }
 

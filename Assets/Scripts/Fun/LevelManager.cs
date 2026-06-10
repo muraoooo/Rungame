@@ -23,4 +23,19 @@ public static class LevelManager
     {
         CurrentStage = 1;
     }
+
+    // Retry / next-stage reloads skip the title screen and go straight to play.
+    static bool autoStart;
+
+    public static void RequestAutoStart()
+    {
+        autoStart = true;
+    }
+
+    public static bool ConsumeAutoStart()
+    {
+        bool value = autoStart;
+        autoStart = false;
+        return value;
+    }
 }

@@ -4,8 +4,6 @@ public class Spike : MonoBehaviour
 {
     static Sprite spikeSprite;
 
-    bool triggered;
-
     public static Spike Spawn(Vector2 groundPoint, float width)
     {
         GameObject spikeObject = new GameObject("Spike");
@@ -36,17 +34,12 @@ public class Spike : MonoBehaviour
 
     void TryKill(Collider2D other)
     {
-        if (triggered || GameSession.HasEnded || !other.CompareTag("Player"))
+        if (GameSession.HasEnded || !other.CompareTag("Player"))
         {
             return;
         }
 
-        triggered = true;
-        RetroSfx.PlayGameOver();
-        JuiceManager.Shake(0.5f);
-        JuiceManager.Burst(other.transform.position, new Color(1f, 0.35f, 0.3f), 16, 6f);
-        EndBannerUI.Show("UI/GameOverBanner");
-        GameSession.EndGame(other.gameObject);
+        RespawnSystem.KillPlayer(other.gameObject);
     }
 
     static Sprite GetSpikeSprite()

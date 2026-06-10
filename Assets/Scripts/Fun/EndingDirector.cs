@@ -91,7 +91,8 @@ public class EndingDirector : MonoBehaviour
         int minutes = Mathf.FloorToInt(GameSession.ElapsedTime / 60f);
         float seconds = GameSession.ElapsedTime - minutes * 60f;
         statsLine = "スコア " + ScoreSystem.Score.ToString("N0")
-            + "   タイム " + minutes.ToString("00") + ":" + seconds.ToString("00.00");
+            + "   タイム " + minutes.ToString("00") + ":" + seconds.ToString("00.00")
+            + (RespawnSystem.Deaths > 0 ? "   ミス ×" + RespawnSystem.Deaths : "   ノーミス!");
 
         EndBannerUI.Clear();
         RetroSfx.PlayEndingMusic();

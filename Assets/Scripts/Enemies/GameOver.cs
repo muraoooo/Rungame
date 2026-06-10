@@ -520,35 +520,21 @@ public class GameOver : MonoBehaviour
 
     void GameOverPlayer(GameObject player)
     {
-        if (isGameOver || isDefeated || !player.CompareTag("Player"))
+        if (isDefeated || !player.CompareTag("Player"))
         {
             return;
         }
 
-        isGameOver = true;
-
-        RetroSfx.PlayGameOver();
-        JuiceManager.Shake(0.5f);
-        JuiceManager.Burst(player.transform.position, new Color(1f, 0.35f, 0.3f), 16, 6f);
-
-        if (gameOverText != null)
+        // Star power: during FEVER, touching an enemy destroys it instead.
+        if (ScoreSystem.IsFever)
         {
-            gameOverText.SetActive(true);
-
-            Text text = gameOverText.GetComponent<Text>();
-            if (text != null)
-            {
-                text.text = "ゲームオーバーだよ";
-            }
-        }
-        else
-        {
-            showedImageBanner = EndBannerUI.Show("UI/GameOverBanner");
+            DefeatEnemy(player, player.transform.position);
+            return;
         }
 
-        GameSession.EndGame(player);
-
-        Debug.Log("ゲームオーバーだよ");
+        // No game-over screen: respawn at the last checkpoint.
+        RespawnSystem.KillPlayer(player);
+        return;
     }
 
     void SnapToGround()
