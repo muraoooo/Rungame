@@ -79,10 +79,17 @@ public static class LevelBuilder
         SpawnSpikeOnGround(35f, 1.8f);
 
         SpawnVariantOnGround(VariantEnemyKind.Togemaru, 11.8f, 0f, 0f, 0.7f);
-        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 37.8f, 0.6f, 0.8f, 0.7f);
+        // Second Togemaru moved off the spring at x38 - bouncing onto an
+        // unstompable enemy was a trap. Now a static guard on open ground.
+        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 41.5f, 0f, 0f, 0.7f);
         SpawnExtraSlime(16f, 3.2f, 3f, false);
         SpawnExtraSlime(30f, 2f, 2.5f, false);
         SpawnExtraSlime(44f, 1.8f, 2f, true);
+
+        if (IsFirstVisit(2))
+        {
+            SpawnHintOnGround(10.3f, "トゲボールは ふめない! Fで うとう!");
+        }
 
         SpawnLiftOnGround(33f, 1.6f, 2.6f, 3.4f);
         SpawnSpringOnGround(38f);
@@ -112,8 +119,16 @@ public static class LevelBuilder
         SpawnExtraSlime(36f, 2.2f, 2f, true);
         SpawnExtraSlime(47f, 2.8f, 2.5f, false);
         SpawnExtraSlime(50f, 2f, 1.5f, true);
-        SpawnVariantOnGround(VariantEnemyKind.Pettan, 24f, 0f, 0f, 0.65f);
-        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 32f, 1.1f, 2.4f, 0.72f);
+        // Pettan nudged off the spike-22 landing zone; Kabuton moved out of
+        // its old patrol (29.6-34.4) that walked through spike 30 and the
+        // spring at 33 - now patrols clear ground past spike 38.
+        SpawnVariantOnGround(VariantEnemyKind.Pettan, 24.6f, 0f, 0f, 0.65f);
+        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 40.5f, 1f, 1f, 0.72f);
+
+        if (IsFirstVisit(3))
+        {
+            SpawnHintOnGround(39f, "カブトンは まえが かたい! うえから ふもう!");
+        }
 
         SpawnLiftOnGround(20f, 1.6f, 3f, 3f);
         SpawnLiftOnGround(42f, 1.6f, 3.2f, 2.6f);
@@ -262,9 +277,13 @@ public static class LevelBuilder
         // Last breath before the arena
         SpawnSpikeOnGround(34.5f, 1.8f);
         SpawnSpikeOnGround(37f, 1.8f);
-        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 35.7f, 0f, 0f, 0.7f);
-        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 39.8f, 1.2f, 1.8f, 0.72f);
-        SpawnBatkin(43f, 2.4f, 1.4f, 3f);
+        // Old Togemaru at 35.7 sat in the 0.7-unit gap between the two
+        // spikes - physically impassable on the ground. Now a static gate
+        // guard before the arena. Kabuton is static so it no longer patrols
+        // over the checkpoint (38.5) and the spring (41). Batkin removed:
+        // boss globs + flying enemy + spring arcs was overload.
+        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 44.3f, 0f, 0f, 0.7f);
+        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 39.8f, 0f, 0f, 0.72f);
 
         SpawnCheckpointOnGround(17f);
         SpawnCheckpointOnGround(38.5f);
