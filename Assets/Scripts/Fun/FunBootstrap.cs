@@ -45,14 +45,28 @@ public class FunBootstrap : MonoBehaviour
             manager.AddComponent<JuiceManager>();
             manager.AddComponent<ScoreHud>();
             manager.AddComponent<RestartController>();
+            manager.AddComponent<OpeningDirector>();
+            manager.AddComponent<EndingDirector>();
         }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
+            RespawnSystem.Reset(player.transform.position);
+
+            if (player.GetComponent<PlayerBlinker>() == null)
+            {
+                player.AddComponent<PlayerBlinker>();
+            }
+
             if (player.GetComponent<PlayerDash>() == null)
             {
                 player.AddComponent<PlayerDash>();
+            }
+
+            if (player.GetComponent<SpecialAttack>() == null)
+            {
+                player.AddComponent<SpecialAttack>();
             }
 
             if (player.GetComponent<PlayerAttackShooter>() == null)
@@ -61,12 +75,14 @@ public class FunBootstrap : MonoBehaviour
             }
         }
 
-        StartCoroutine(SpawnCoinsNextFrame());
+        StartCoroutine(BuildLevelNextFrame());
     }
 
-    IEnumerator SpawnCoinsNextFrame()
+    IEnumerator BuildLevelNextFrame()
     {
         yield return null;
-        CoinSpawner.SpawnLevelCoins();
+        LevelBuilder.Build(LevelManager.CurrentStage);
+        // Final stage: no coins in the boss arena
+        CoinSpawner.SpawnLevelCoins(LevelManager.CurrentStage >= LevelManager.MaxStage ? 36f : 50f);
     }
 }
