@@ -97,6 +97,18 @@ public class SpecialCutin : MonoBehaviour
             JuiceManager.Burst(enemy.transform.position, new Color(0.5f, 0.9f, 0.45f), 12, 6f);
             enemy.DefeatBySpecial(origin);
         }
+
+        VariantEnemy[] variantEnemies = Object.FindObjectsByType<VariantEnemy>(FindObjectsSortMode.None);
+        foreach (VariantEnemy enemy in variantEnemies)
+        {
+            if (Vector3.Distance(enemy.transform.position, origin) > BlastRadius)
+            {
+                continue;
+            }
+
+            JuiceManager.Burst(enemy.transform.position, new Color(0.5f, 0.9f, 0.65f), 12, 6f);
+            enemy.DefeatBySpecial(origin);
+        }
     }
 
     void OnGUI()

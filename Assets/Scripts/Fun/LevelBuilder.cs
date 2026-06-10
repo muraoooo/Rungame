@@ -78,6 +78,8 @@ public static class LevelBuilder
         SpawnSpikeOnGround(21f, 1.6f);
         SpawnSpikeOnGround(35f, 1.8f);
 
+        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 11.8f, 0f, 0f, 0.7f);
+        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 37.8f, 0.6f, 0.8f, 0.7f);
         SpawnExtraSlime(16f, 3.2f, 3f, false);
         SpawnExtraSlime(30f, 2f, 2.5f, false);
         SpawnExtraSlime(44f, 1.8f, 2f, true);
@@ -110,6 +112,8 @@ public static class LevelBuilder
         SpawnExtraSlime(36f, 2.2f, 2f, true);
         SpawnExtraSlime(47f, 2.8f, 2.5f, false);
         SpawnExtraSlime(50f, 2f, 1.5f, true);
+        SpawnVariantOnGround(VariantEnemyKind.Pettan, 24f, 0f, 0f, 0.65f);
+        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 32f, 1.1f, 2.4f, 0.72f);
 
         SpawnLiftOnGround(20f, 1.6f, 3f, 3f);
         SpawnLiftOnGround(42f, 1.6f, 3.2f, 2.6f);
@@ -158,6 +162,8 @@ public static class LevelBuilder
         SpawnExtraSlime(14f, 2.6f, 2.2f, false);
         SpawnExtraSlime(26f, 2f, 1.8f, true);
         SpawnExtraSlime(43f, 3f, 2.5f, false);
+        SpawnBatkin(18.5f, 1.6f, 1.2f, 2.4f);
+        SpawnBatkin(39.5f, 1.8f, 1.4f, 2.8f);
 
         SpawnLiftOnGround(36.5f, 1.5f, 2.6f, 3f);
         SpawnSpringOnGround(31f);
@@ -256,6 +262,9 @@ public static class LevelBuilder
         // Last breath before the arena
         SpawnSpikeOnGround(34.5f, 1.8f);
         SpawnSpikeOnGround(37f, 1.8f);
+        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 35.7f, 0f, 0f, 0.7f);
+        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 39.8f, 1.2f, 1.8f, 0.72f);
+        SpawnBatkin(43f, 2.4f, 1.4f, 3f);
 
         SpawnCheckpointOnGround(17f);
         SpawnCheckpointOnGround(38.5f);
@@ -385,6 +394,28 @@ public static class LevelBuilder
             hop.hopPower = 6.5f;
             hop.hopIntervalSeconds = 1.5f;
         }
+    }
+
+    static void SpawnVariantOnGround(VariantEnemyKind kind, float x, float patrolSpeed, float patrolDistance, float aboveGround)
+    {
+        Vector2 groundPoint;
+        if (!CoinSpawner.TryFindGround(x, out groundPoint))
+        {
+            return;
+        }
+
+        VariantEnemy.Spawn(kind, new Vector3(groundPoint.x, groundPoint.y + aboveGround, 0f), patrolSpeed, patrolDistance);
+    }
+
+    static void SpawnBatkin(float x, float aboveGround, float patrolSpeed, float patrolDistance)
+    {
+        Vector2 groundPoint;
+        if (!CoinSpawner.TryFindGround(x, out groundPoint))
+        {
+            return;
+        }
+
+        VariantEnemy.Spawn(VariantEnemyKind.Batkin, new Vector3(groundPoint.x, groundPoint.y + aboveGround, 0f), patrolSpeed, patrolDistance);
     }
 
     static void SpawnSpikeOnGround(float x, float width)

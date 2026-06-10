@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-// King Slime boss for stage 1-4. Bowser rules: only stomps hurt it (3 hits),
+// King Slime boss for stage 1-5. Bowser rules: only stomps hurt it (3 hits),
 // it gets faster and angrier with each hit, spits poison globs, and guards
 // the goal behind a barrier until defeated.
 public class BossSlime : MonoBehaviour
@@ -26,6 +26,7 @@ public class BossSlime : MonoBehaviour
     Transform player;
     Color baseColor;
 
+    bool usesGeneratedKingSprite;
     bool introduced;
     bool defeated;
     bool wasAirborne;
@@ -43,13 +44,22 @@ public class BossSlime : MonoBehaviour
         bossObject.transform.localScale = Vector3.one * 3.2f;
 
         SpriteRenderer renderer = bossObject.AddComponent<SpriteRenderer>();
-        Sprite[] sprites = Resources.LoadAll<Sprite>("Slime/Idle");
-        if (sprites != null && sprites.Length > 0)
+        Sprite kingSprite = Resources.Load<Sprite>("Enemies/KingSlime");
+        if (kingSprite != null)
         {
-            renderer.sprite = sprites[0];
+            renderer.sprite = kingSprite;
+            renderer.color = Color.white;
+        }
+        else
+        {
+            Sprite[] sprites = Resources.LoadAll<Sprite>("Slime/Idle");
+            if (sprites != null && sprites.Length > 0)
+            {
+                renderer.sprite = sprites[0];
+            }
+            renderer.color = new Color(0.85f, 0.5f, 1f, 1f);
         }
         renderer.sortingOrder = 12;
-        renderer.color = new Color(0.85f, 0.5f, 1f, 1f);
 
         BoxCollider2D collider = bossObject.AddComponent<BoxCollider2D>();
         if (renderer.sprite != null)
@@ -78,7 +88,11 @@ public class BossSlime : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         bossCollider = GetComponent<Collider2D>();
         baseColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
-        idleSprites = Resources.LoadAll<Sprite>("Slime/Idle");
+        usesGeneratedKingSprite = spriteRenderer != null && spriteRenderer.sprite != null && spriteRenderer.sprite.name == "KingSlime";
+        if (!usesGeneratedKingSprite)
+        {
+            idleSprites = Resources.LoadAll<Sprite>("Slime/Idle");
+        }
         nextHopTime = Time.time + 1f;
         nextSpitTime = Time.time + 2.5f;
     }
@@ -129,7 +143,7 @@ public class BossSlime : MonoBehaviour
 
     void AnimateSprite()
     {
-        if (defeated || idleSprites == null || idleSprites.Length == 0 || spriteRenderer == null)
+        if (defeated || usesGeneratedKingSprite || idleSprites == null || idleSprites.Length == 0 || spriteRenderer == null)
         {
             return;
         }
