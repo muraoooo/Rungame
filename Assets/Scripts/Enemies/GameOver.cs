@@ -321,6 +321,12 @@ public class GameOver : MonoBehaviour
 
         isDefeated = true;
 
+        ScoreSystem.RegisterStomp(transform.position);
+        RetroSfx.PlayStomp();
+        JuiceManager.Shake(0.3f);
+        JuiceManager.HitStop(0.06f);
+        JuiceManager.Burst(transform.position, new Color(0.5f, 0.9f, 0.45f), 14, 5.5f);
+
         Rigidbody2D playerRigidbody = player != null ? player.GetComponent<Rigidbody2D>() : null;
         if (playerRigidbody != null)
         {
@@ -515,6 +521,10 @@ public class GameOver : MonoBehaviour
         }
 
         isGameOver = true;
+
+        RetroSfx.PlayGameOver();
+        JuiceManager.Shake(0.5f);
+        JuiceManager.Burst(player.transform.position, new Color(1f, 0.35f, 0.3f), 16, 6f);
 
         if (gameOverText != null)
         {

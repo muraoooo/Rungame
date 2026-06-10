@@ -1,0 +1,72 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class FunBootstrap : MonoBehaviour
+{
+    static FunBootstrap instance;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void Initialize()
+    {
+        if (instance != null)
+        {
+            return;
+        }
+
+        GameObject host = new GameObject("FunBootstrap");
+        DontDestroyOnLoad(host);
+        instance = host.AddComponent<FunBootstrap>();
+        instance.SetUpScene();
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        SetUpScene();
+    }
+
+    void SetUpScene()
+    {
+        ScoreSystem.Reset();
+
+        if (FindAnyObjectByType<JuiceManager>() == null)
+        {
+            GameObject manager = new GameObject("FunManager");
+            manager.AddComponent<JuiceManager>();
+            manager.AddComponent<ScoreHud>();
+            manager.AddComponent<RestartController>();
+        }
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            if (player.GetComponent<PlayerDash>() == null)
+            {
+                player.AddComponent<PlayerDash>();
+            }
+
+            if (player.GetComponent<PlayerAttackShooter>() == null)
+            {
+                player.AddComponent<PlayerAttackShooter>();
+            }
+        }
+
+        StartCoroutine(SpawnCoinsNextFrame());
+    }
+
+    IEnumerator SpawnCoinsNextFrame()
+    {
+        yield return null;
+        CoinSpawner.SpawnLevelCoins();
+    }
+}

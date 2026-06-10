@@ -66,6 +66,7 @@ public class PlayerAttackShooter : MonoBehaviour
 
         attack.Fire(direction, projectileSpeed);
         cooldownTimer = cooldownSeconds;
+        RetroSfx.PlayShoot();
     }
 
     GameObject CreateDefaultProjectile(Vector3 spawnPosition)
