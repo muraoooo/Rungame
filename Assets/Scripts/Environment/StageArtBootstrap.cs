@@ -17,8 +17,10 @@ public static class StageArtBootstrap
 
         // A full stage backdrop replaces the legacy grassland layers, which
         // would otherwise draw in front of it (Background sits at order -10,
-        // above the sky/far/mid layers at -40/-35/-30).
-        if (Resources.Load<Sprite>("StageArt/Stage" + stage + "/sky") != null)
+        // above the sky/far/mid layers at -40/-35/-30). Either "sky" or a
+        // full-bleed "far" counts as a full backdrop (Stage3 ships far only).
+        if (Resources.Load<Sprite>("StageArt/Stage" + stage + "/sky") != null
+            || Resources.Load<Sprite>("StageArt/Stage" + stage + "/far") != null)
         {
             DisableLegacyBackdrop();
         }
