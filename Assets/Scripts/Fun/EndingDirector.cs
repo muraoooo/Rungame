@@ -92,8 +92,18 @@ public class EndingDirector : MonoBehaviour
 
         int minutes = Mathf.FloorToInt(GameSession.ElapsedTime / 60f);
         float seconds = GameSession.ElapsedTime - minutes * 60f;
-        statsLine = "スコア " + ScoreSystem.Score.ToString("N0")
-            + "   タイム " + minutes.ToString("00") + ":" + seconds.ToString("00.00")
+        int runMedals = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            if (ScoreSystem.IsMedalRunCollected(i))
+            {
+                runMedals++;
+            }
+        }
+
+        statsLine = "タイム " + minutes.ToString("00") + ":" + seconds.ToString("00.00")
+            + "   スコア " + ScoreSystem.Score.ToString("N0")
+            + "   メダル " + runMedals + "/3"
             + (RespawnSystem.Deaths > 0 ? "   ミス ×" + RespawnSystem.Deaths : "   ノーミス!");
 
         EndBannerUI.Clear();

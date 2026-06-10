@@ -259,15 +259,16 @@ public class OpeningDirector : MonoBehaviour
     {
         textStyle.fontSize = Mathf.RoundToInt(22f * scale);
         float y = 24f * scale;
+        float rowHeight = 24f * scale;
         bool anyRecord = false;
 
         int totalMedals = ScoreSystem.TotalMedals;
         if (totalMedals > 0)
         {
-            DrawOutlinedAt(new Rect(width - 320f * scale, y, 300f * scale, 30f * scale),
+            DrawOutlinedAt(new Rect(width - 320f * scale, y, 300f * scale, rowHeight),
                 "スターメダル ★ " + totalMedals + " / " + LevelManager.MaxStage * 3,
                 new Color(1f, 0.85f, 0.25f), scale, TextAnchor.MiddleRight);
-            y += 34f * scale;
+            y += rowHeight;
         }
 
         for (int stage = 1; stage <= LevelManager.MaxStage; stage++)
@@ -281,9 +282,9 @@ public class OpeningDirector : MonoBehaviour
             if (!anyRecord)
             {
                 anyRecord = true;
-                DrawOutlinedAt(new Rect(width - 320f * scale, y, 300f * scale, 30f * scale),
+                DrawOutlinedAt(new Rect(width - 320f * scale, y, 300f * scale, rowHeight),
                     "- BEST TIMES -", new Color(1f, 0.9f, 0.5f), scale, TextAnchor.MiddleRight);
-                y += 32f * scale;
+                y += rowHeight;
             }
 
             int minutes = Mathf.FloorToInt(best / 60f);
@@ -293,9 +294,9 @@ public class OpeningDirector : MonoBehaviour
                 + (string.IsNullOrEmpty(rank) ? "" : "  [" + rank + "]")
                 + (medals > 0 ? "  ★" + medals : "");
             Color rowColor = string.IsNullOrEmpty(rank) ? Color.white : ScoreSystem.RankColor(rank);
-            DrawOutlinedAt(new Rect(width - 320f * scale, y, 300f * scale, 30f * scale),
+            DrawOutlinedAt(new Rect(width - 320f * scale, y, 300f * scale, rowHeight),
                 text, rowColor, scale, TextAnchor.MiddleRight);
-            y += 30f * scale;
+            y += rowHeight;
         }
     }
 

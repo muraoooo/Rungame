@@ -45,11 +45,8 @@ public class ScoreHud : MonoBehaviour
         DrawScore(scale);
         DrawStageLabel(scale);
         DrawStageIntro(scale);
-        DrawCombo(scale);
-        DrawFever(scale);
-        DrawMagnet(scale);
-        DrawDeaths(scale);
-        DrawBossHealth(scale);
+        DrawActionStatus(scale);
+        DrawRunStatus(scale);
         DrawStartHint(scale);
         DrawEndPanel(scale);
     }
@@ -121,45 +118,6 @@ public class ScoreHud : MonoBehaviour
         }
     }
 
-    void DrawBossHealth(float scale)
-    {
-        if (!BossSlime.BossFightActive || GameSession.HasEnded)
-        {
-            return;
-        }
-
-        BossSlime boss = BossSlime.Instance;
-        float pulse = 1f + Mathf.Sin(Time.unscaledTime * 6f) * 0.05f;
-        bigStyle.fontSize = Mathf.RoundToInt(38f * scale * pulse);
-        string hearts = new string('★', boss.Health) + new string('☆', boss.maxHealth - boss.Health);
-        Rect rect = new Rect(0f, 150f * scale, Screen.width, 50f * scale);
-        DrawOutlined(rect, "キングスライム " + hearts, bigStyle, new Color(1f, 0.45f, 0.85f));
-    }
-
-    void DrawDeaths(float scale)
-    {
-        if (RespawnSystem.Deaths <= 0)
-        {
-            return;
-        }
-
-        infoStyle.fontSize = Mathf.RoundToInt(22f * scale);
-        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 124f) * scale, 400f * scale, 30f * scale);
-        DrawOutlined(rect, "ミス ×" + RespawnSystem.Deaths, infoStyle, new Color(1f, 0.6f, 0.55f));
-    }
-
-    void DrawMagnet(float scale)
-    {
-        if (!ScoreSystem.MagnetActive)
-        {
-            return;
-        }
-
-        infoStyle.fontSize = Mathf.RoundToInt(22f * scale);
-        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 154f) * scale, 400f * scale, 30f * scale);
-        DrawOutlined(rect, "マグネット " + ScoreSystem.MagnetTimeLeft.ToString("0.0"), infoStyle, new Color(0.45f, 0.9f, 1f));
-    }
-
     // A deliberately small HUD column: score, the W gauge, stage + medals.
     // Coin count and best time were cut - the score and the title screen
     // already carry that information.
@@ -185,35 +143,82 @@ public class ScoreHud : MonoBehaviour
         }
     }
 
-    void DrawCombo(float scale)
+    void DrawActionStatus(float scale)
     {
-        if (GameSession.HasEnded || ScoreSystem.Combo < 2 || ScoreSystem.ComboTimeLeft <= 0f)
+        if (GameSession.HasEnded || GameSession.ElapsedTime <= 1.8f)
         {
             return;
         }
 
-        float pulse = 1f + Mathf.Sin(Time.unscaledTime * 9f) * 0.06f;
-        bigStyle.fontSize = Mathf.RoundToInt(46f * scale * pulse);
-        Rect rect = new Rect(0f, 116f * scale, Screen.width, 60f * scale);
-        DrawOutlined(rect, ScoreSystem.Combo + " COMBO!", bigStyle, new Color(1f, 0.5f, 0.3f));
+        string text = "";
+        Color color = Color.white;
+        float fontSize = 38f;
+        float pulseSpeed = 6f;
+
+        if (BossSlime.BossFightActive && BossSlime.Instance != null)
+        {
+            BossSlime boss = BossSlime.Instance;
+            string hearts = new string('★', boss.Health) + new string('☆', boss.maxHealth - boss.Health);
+            text = "キングスライム " + hearts;
+            color = new Color(1f, 0.45f, 0.85f);
+
+            if (ScoreSystem.IsFever)
+            {
+                text += "   FEVER " + ScoreSystem.FeverTimeLeft.ToString("0.0");
+                color = Color.HSVToRGB(Mathf.Repeat(Time.unscaledTime * 1.6f, 1f), 0.75f, 1f);
+            }
+        }
+        else if (ScoreSystem.IsFever)
+        {
+            text = "FEVER x2  " + ScoreSystem.FeverTimeLeft.ToString("0.0");
+            color = Color.HSVToRGB(Mathf.Repeat(Time.unscaledTime * 1.6f, 1f), 0.75f, 1f);
+            fontSize = 46f;
+            pulseSpeed = 12f;
+        }
+        else if (ScoreSystem.Combo >= 2 && ScoreSystem.ComboTimeLeft > 0f)
+        {
+            text = ScoreSystem.Combo + " COMBO!";
+            color = new Color(1f, 0.5f, 0.3f);
+            fontSize = 42f;
+            pulseSpeed = 9f;
+        }
+
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        float pulse = 1f + Mathf.Sin(Time.unscaledTime * pulseSpeed) * 0.06f;
+        bigStyle.fontSize = Mathf.RoundToInt(fontSize * scale * pulse);
+        Rect rect = new Rect(0f, 116f * scale, Screen.width, 54f * scale);
+        DrawOutlined(rect, text, bigStyle, color);
     }
 
-    void DrawFever(float scale)
+    void DrawRunStatus(float scale)
     {
-        if (!ScoreSystem.IsFever || GameSession.HasEnded)
+        if (GameSession.HasEnded || (RespawnSystem.Deaths <= 0 && !ScoreSystem.MagnetActive))
         {
             return;
         }
 
-        Color rainbow = Color.HSVToRGB(Mathf.Repeat(Time.unscaledTime * 1.6f, 1f), 0.75f, 1f);
-        float pulse = 1f + Mathf.Sin(Time.unscaledTime * 12f) * 0.1f;
-        bigStyle.fontSize = Mathf.RoundToInt(58f * scale * pulse);
-        Rect rect = new Rect(0f, 30f * scale, Screen.width, 76f * scale);
-        DrawOutlined(rect, "FEVER!! x2", bigStyle, rainbow);
+        string text = "";
+        if (RespawnSystem.Deaths > 0)
+        {
+            text = "ミス " + RespawnSystem.Deaths;
+        }
 
-        bigStyle.fontSize = Mathf.RoundToInt(24f * scale);
-        Rect timeRect = new Rect(0f, 100f * scale, Screen.width, 30f * scale);
-        DrawOutlined(timeRect, ScoreSystem.FeverTimeLeft.ToString("0.0"), bigStyle, Color.white);
+        if (ScoreSystem.MagnetActive)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                text += "   ";
+            }
+            text += "マグネット " + ScoreSystem.MagnetTimeLeft.ToString("0.0");
+        }
+
+        infoStyle.fontSize = Mathf.RoundToInt(22f * scale);
+        Rect rect = new Rect(Screen.width - 420f * scale, (18f + 124f) * scale, 400f * scale, 30f * scale);
+        DrawOutlined(rect, text, infoStyle, new Color(0.7f, 0.95f, 1f));
     }
 
     void DrawStartHint(float scale)
@@ -241,15 +246,13 @@ public class ScoreHud : MonoBehaviour
             return;
         }
 
-        // Bottom-anchored rows with fixed spacing so nothing overlaps:
-        // ALL CLEAR (height-250) > NEW RECORD (height-190) > time/score (height-124) > hint (height-58).
+        // Bottom-anchored rows with fixed spacing:
+        // ALL CLEAR > NEW RECORD > time > score/medals/misses > hint.
         string hint = "R か ENTER で もういちど!";
 
         if (GameSession.ReachedGoal)
         {
             DrawRankStamp(scale);
-            bigStyle.fontSize = Mathf.RoundToInt(34f * scale);
-            Rect timeRect = new Rect(0f, Screen.height - 124f * scale, Screen.width, 46f * scale);
             int runMedals = 0;
             for (int i = 0; i < 3; i++)
             {
@@ -259,17 +262,23 @@ public class ScoreHud : MonoBehaviour
                 }
             }
 
-            string result = "タイム " + FormatTime(GameSession.ElapsedTime) + "   スコア " + ScoreSystem.Score.ToString("N0");
-            result += "   ★" + runMedals + "/3";
-            result += RespawnSystem.Deaths > 0 ? "   ミス ×" + RespawnSystem.Deaths : "   ノーミス!";
-            DrawOutlined(timeRect, result, bigStyle, Color.white);
+            bigStyle.fontSize = Mathf.RoundToInt(34f * scale);
+            Rect timeRect = new Rect(0f, Screen.height - 150f * scale, Screen.width, 42f * scale);
+            DrawOutlined(timeRect, "タイム " + FormatTime(GameSession.ElapsedTime), bigStyle, Color.white);
+
+            bigStyle.fontSize = Mathf.RoundToInt(29f * scale);
+            Rect scoreRect = new Rect(0f, Screen.height - 108f * scale, Screen.width, 36f * scale);
+            string scoreLine = "スコア " + ScoreSystem.Score.ToString("N0")
+                + "   メダル " + runMedals + "/3"
+                + (RespawnSystem.Deaths > 0 ? "   ミス " + RespawnSystem.Deaths : "   ノーミス");
+            DrawOutlined(scoreRect, scoreLine, bigStyle, new Color(0.9f, 0.96f, 1f));
 
             if (ScoreSystem.NewRecord)
             {
                 Color rainbow = Color.HSVToRGB(Mathf.Repeat(Time.unscaledTime * 2f, 1f), 0.8f, 1f);
                 float pulse = 1f + Mathf.Sin(Time.unscaledTime * 10f) * 0.1f;
                 bigStyle.fontSize = Mathf.RoundToInt(46f * scale * pulse);
-                Rect recordRect = new Rect(0f, Screen.height - 190f * scale, Screen.width, 60f * scale);
+                Rect recordRect = new Rect(0f, Screen.height - 214f * scale, Screen.width, 60f * scale);
                 DrawOutlined(recordRect, "★ NEW RECORD!! ★", bigStyle, rainbow);
             }
 
@@ -278,7 +287,7 @@ public class ScoreHud : MonoBehaviour
                 Color gold = Color.HSVToRGB(Mathf.Repeat(Time.unscaledTime * 1.2f, 1f), 0.55f, 1f);
                 float pulse = 1f + Mathf.Sin(Time.unscaledTime * 7f) * 0.08f;
                 bigStyle.fontSize = Mathf.RoundToInt(52f * scale * pulse);
-                Rect clearRect = new Rect(0f, Screen.height - 250f * scale, Screen.width, 64f * scale);
+                Rect clearRect = new Rect(0f, Screen.height - 272f * scale, Screen.width, 64f * scale);
                 DrawOutlined(clearRect, "☆ ぜんステージクリア!! ☆", bigStyle, gold);
                 hint = "ENTER で 1-1 から / R でもういちど";
             }
