@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 public class BoostRing : MonoBehaviour
 {
     const float ReuseCooldownSeconds = 3f;
+    const float BoostHorizontalSpeed = 9f;
+    const float BoostVerticalFloor = 4f;
+    const float BoostHoldSeconds = 0.28f;
     const string Stage5RingRootName = "__Stage5BoostRings";
 
     static Sprite ringSprite;
@@ -12,6 +15,7 @@ public class BoostRing : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
     Vector3 baseScale;
+    float spinOffset;
     float readyTime;
 
     public static BoostRing Spawn(Vector3 position)
@@ -47,18 +51,20 @@ public class BoostRing : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         baseScale = transform.localScale;
+        spinOffset = Random.value * 10f;
     }
 
     void Update()
     {
-        float pulse = 1f + Mathf.Sin(Time.time * 4f) * 0.1f;
+        float time = Time.time + spinOffset;
+        float pulse = 1f + Mathf.Sin(time * 3.2f) * 0.08f;
         transform.localScale = baseScale * pulse;
-        transform.Rotate(0f, 0f, 80f * Time.deltaTime);
+        transform.localRotation = Quaternion.Euler(0f, 0f, time * 36f);
 
         if (spriteRenderer != null)
         {
             Color color = spriteRenderer.color;
-            color.a = Time.time < readyTime ? 0.38f : 1f;
+            color.a = Time.time < readyTime ? 0.35f : 1f;
             spriteRenderer.color = color;
         }
     }
@@ -86,8 +92,13 @@ public class BoostRing : MonoBehaviour
             return;
         }
 
-        float facing = PlayerFacing(other.gameObject);
-        playerBody.linearVelocity = new Vector2(9f * facing, Mathf.Max(playerBody.linearVelocity.y, 4f));
+        readyTime = Time.time + ReuseCooldownSeconds;
+
+        float facing = PlayerFacing(other.gameObject, playerBody);
+        playerBody.linearVelocity = new Vector2(
+            BoostHorizontalSpeed * facing,
+            Mathf.Max(playerBody.linearVelocity.y, BoostVerticalFloor));
+        StartCoroutine(HoldBoostVelocity(playerBody, facing));
 
         PlayerDash dash = other.GetComponent<PlayerDash>();
         if (dash != null)
@@ -95,14 +106,27 @@ public class BoostRing : MonoBehaviour
             dash.RechargeNow();
         }
 
-        readyTime = Time.time + ReuseCooldownSeconds;
         ScoreSystem.AddTrick(transform.position);
         RetroSfx.PlayTrick();
-        JuiceManager.Confetti(transform.position, 20);
-        JuiceManager.Popup(transform.position + Vector3.up * 0.7f, "ビュン!", new Color(1f, 0.92f, 0.35f), 1.2f);
+        SpawnRainbowBurst(transform.position);
+        JuiceManager.Popup(transform.position + Vector3.up * 0.7f, "ビュン!", new Color(0.95f, 1f, 0.45f), 1.2f);
     }
 
-    static float PlayerFacing(GameObject player)
+    IEnumerator HoldBoostVelocity(Rigidbody2D playerBody, float facing)
+    {
+        float endTime = Time.time + BoostHoldSeconds;
+        WaitForFixedUpdate wait = new WaitForFixedUpdate();
+
+        while (playerBody != null && Time.time < endTime)
+        {
+            yield return wait;
+            playerBody.linearVelocity = new Vector2(
+                BoostHorizontalSpeed * facing,
+                Mathf.Max(playerBody.linearVelocity.y, BoostVerticalFloor));
+        }
+    }
+
+    static float PlayerFacing(GameObject player, Rigidbody2D body)
     {
         SpriteRenderer playerRenderer = player.GetComponent<SpriteRenderer>();
         if (playerRenderer != null)
@@ -110,13 +134,21 @@ public class BoostRing : MonoBehaviour
             return playerRenderer.flipX ? -1f : 1f;
         }
 
-        Rigidbody2D body = player.GetComponent<Rigidbody2D>();
-        if (body != null && Mathf.Abs(body.linearVelocity.x) > 0.05f)
+        if (Mathf.Abs(body.linearVelocity.x) > 0.05f)
         {
             return Mathf.Sign(body.linearVelocity.x);
         }
 
-        return 1f;
+        return player.transform.localScale.x < 0f ? -1f : 1f;
+    }
+
+    static void SpawnRainbowBurst(Vector3 position)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            Color color = Color.HSVToRGB(i / 6f, 0.85f, 1f);
+            JuiceManager.Burst(position, color, 4, 5.8f);
+        }
     }
 
     static Sprite GetRingSprite()
@@ -128,36 +160,41 @@ public class BoostRing : MonoBehaviour
 
         const int size = 64;
         Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
-        texture.filterMode = FilterMode.Bilinear;
+        texture.filterMode = FilterMode.Point;
         Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
 
-        Color glow = new Color(1f, 0.74f, 0.12f, 0.45f);
-        Color outer = new Color(1f, 0.64f, 0.05f, 1f);
-        Color core = new Color(1f, 0.93f, 0.35f, 1f);
+        Color glow = new Color(1f, 0.78f, 0.12f, 0.42f);
+        Color rim = new Color(1f, 0.92f, 0.28f, 1f);
+        Color shade = new Color(0.95f, 0.46f, 0.05f, 1f);
         Color shine = Color.white;
 
         for (int y = 0; y < size; y++)
         {
             for (int x = 0; x < size; x++)
             {
-                Vector2 delta = new Vector2(x, y) - center;
-                float radius = delta.magnitude;
+                float radius = Vector2.Distance(new Vector2(x, y), center);
                 Color color = Color.clear;
 
-                if (radius >= 18f && radius <= 26f)
+                if (radius >= 18f && radius <= 25f)
                 {
-                    float t = Mathf.InverseLerp(26f, 18f, radius);
-                    color = Color.Lerp(outer, core, Mathf.Sin(t * Mathf.PI));
+                    float highlight = Mathf.InverseLerp(25f, 18f, radius);
+                    color = Color.Lerp(shade, rim, highlight);
                 }
-                else if (radius >= 14f && radius <= 30f)
+                else if ((radius >= 15f && radius < 18f) || (radius > 25f && radius <= 29f))
                 {
-                    float alpha = Mathf.InverseLerp(30f, 26f, radius) * Mathf.InverseLerp(14f, 18f, radius);
-                    color = new Color(glow.r, glow.g, glow.b, glow.a * Mathf.Clamp01(alpha));
+                    float alpha = radius < 18f
+                        ? Mathf.InverseLerp(15f, 18f, radius)
+                        : Mathf.InverseLerp(29f, 25f, radius);
+                    color = new Color(glow.r, glow.g, glow.b, glow.a * alpha);
                 }
 
-                if (radius >= 19f && radius <= 23f && delta.y > 5f && delta.x < -4f)
+                bool sparklePixel = (x >= 46 && x <= 49 && y >= 45 && y <= 48)
+                    || (x >= 14 && x <= 16 && y >= 17 && y <= 19)
+                    || (x == 50 && y == 14)
+                    || (x == 13 && y == 50);
+                if (sparklePixel)
                 {
-                    color = Color.Lerp(color, shine, 0.55f);
+                    color = Color.Lerp(color, shine, 0.8f);
                 }
 
                 texture.SetPixel(x, y, color);
@@ -165,7 +202,7 @@ public class BoostRing : MonoBehaviour
         }
 
         texture.Apply();
-        ringSprite = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), 64f);
+        ringSprite = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
         return ringSprite;
     }
 
