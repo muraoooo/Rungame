@@ -37,6 +37,7 @@ public class FunBootstrap : MonoBehaviour
 
     void SetUpScene()
     {
+        LevelManager.DetectStageFromScene(SceneManager.GetActiveScene().name);
         ScoreSystem.Reset();
 
         if (FindAnyObjectByType<JuiceManager>() == null)

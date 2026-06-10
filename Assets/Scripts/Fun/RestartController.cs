@@ -24,7 +24,7 @@ public class RestartController : MonoBehaviour
         {
             Time.timeScale = 1f;
             EndBannerUI.Clear();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            LoadStageScene();
             return;
         }
 
@@ -78,7 +78,22 @@ public class RestartController : MonoBehaviour
 
         Time.timeScale = 1f;
         EndBannerUI.Clear();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        LoadStageScene();
+    }
+
+    // Each stage lives in its own scene (Stage1..Stage5). Falls back to
+    // reloading the current scene if the stage scene is not in the build.
+    void LoadStageScene()
+    {
+        string sceneName = LevelManager.SceneNameForStage(LevelManager.CurrentStage);
+        if (Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            SceneManager.LoadScene(sceneName);
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
 
     void CheckFall()

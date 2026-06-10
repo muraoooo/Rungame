@@ -6,6 +6,14 @@ public static class LevelBuilder
 {
     public static void Build(int stage)
     {
+        // Escape hatch for hand-edited scenes: put an empty GameObject named
+        // "NoAutoBuild" in a stage scene and this auto-placement is skipped,
+        // so everything can be placed by hand in the editor instead.
+        if (GameObject.Find("NoAutoBuild") != null)
+        {
+            return;
+        }
+
         switch (stage)
         {
             case 1:
