@@ -79,9 +79,6 @@ public static class LevelBuilder
         SpawnSpikeOnGround(35f, 1.8f);
 
         SpawnVariantOnGround(VariantEnemyKind.Togemaru, 11.8f, 0f, 0f, 0.7f);
-        // Second Togemaru moved off the spring at x38 - bouncing onto an
-        // unstompable enemy was a trap. Now a static guard on open ground.
-        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 96f, 0f, 0f, 0.7f);
         SpawnExtraSlime(16f, 3.2f, 3f, false);
         SpawnExtraSlime(30f, 2f, 2.5f, false);
         SpawnExtraSlime(44f, 1.8f, 2f, true);
@@ -111,7 +108,9 @@ public static class LevelBuilder
         SpawnSpikeOnGround(20.4f, 2f);
         SpawnSpikeOnGround(42.8f, 2.4f);
         SpawnSpikeOnGround(47f, 2f);
-        SpawnSpikeOnGround(52f, 2.2f);
+        // Final hurdle sits at 49.5 - at 52 it overlapped the goal flag and
+        // could kill the player on the goal line.
+        SpawnSpikeOnGround(49.5f, 2f);
 
         SpawnExtraSlime(23.4f, 3.6f, 3f, false);
         SpawnExtraSlime(26.8f, 2f, 2f, true);
@@ -119,16 +118,10 @@ public static class LevelBuilder
         SpawnExtraSlime(33.6f, 2.2f, 2f, true);
         SpawnExtraSlime(37f, 2.8f, 2.5f, false);
         SpawnExtraSlime(50f, 2f, 1.5f, true);
-        // Pettan nudged off the spike-22 landing zone; Kabuton moved out of
-        // its old patrol (29.6-34.4) that walked through spike 30 and the
-        // spring at 33 - now patrols clear ground past spike 38.
+        // Pettan guards the approach to the combo row from a safe distance.
+        // Kabuton makes its proper debut in stage 5 instead - the combo row
+        // already fills this stage's complexity budget.
         SpawnVariantOnGround(VariantEnemyKind.Pettan, 18.8f, 0f, 0f, 0.65f);
-        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 96f, 1f, 1f, 0.72f);
-
-        if (IsFirstVisit(3))
-        {
-            SpawnHintOnGround(96f, "カブトンは まえが かたい! うえから ふもう!");
-        }
 
         SpawnLiftOnGround(20f, 1.6f, 3f, 3f);
         SpawnLiftOnGround(42f, 1.6f, 3.2f, 2.6f);
@@ -178,7 +171,6 @@ public static class LevelBuilder
         SpawnExtraSlime(26f, 2f, 1.8f, true);
         SpawnExtraSlime(43f, 3f, 2.5f, false);
         SpawnBatkin(24.8f, 1.6f, 0f, 0f);
-        SpawnBatkin(96f, 1.8f, 1.4f, 2.8f);
 
         SpawnLiftOnGround(36.5f, 1.5f, 2.6f, 3f);
         SpawnSpringOnGround(31f);
@@ -284,6 +276,13 @@ public static class LevelBuilder
         // boss globs + flying enemy + spring arcs was overload.
         SpawnVariantOnGround(VariantEnemyKind.Togemaru, 44.3f, 0f, 0f, 0.7f);
         SpawnVariantOnGround(VariantEnemyKind.Kabuton, 42.4f, 0f, 0f, 0.72f);
+
+        // Kabuton debuts here now (moved out of stage 3), so the shield
+        // lesson moves with it.
+        if (IsFirstVisit(5))
+        {
+            SpawnHintOnGround(40.6f, "カブトンは まえが かたい! うえから ふもう!");
+        }
 
         SpawnCheckpointOnGround(17f);
         SpawnCheckpointOnGround(38.5f);
