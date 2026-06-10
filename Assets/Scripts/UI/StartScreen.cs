@@ -21,14 +21,6 @@ public class StartScreen : MonoBehaviour
     void Start()
     {
         GameSession.WaitForStart();
-
-        if (LevelManager.ConsumeAutoStart())
-        {
-            hasStarted = true;
-            GameSession.StartGame();
-            return;
-        }
-
         EndBannerUI.Show(startBannerResourcePath);
     }
 

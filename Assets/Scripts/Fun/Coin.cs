@@ -3,7 +3,6 @@ using UnityEngine;
 public class Coin : MonoBehaviour
 {
     static Sprite coinSprite;
-    static Transform cachedPlayer;
 
     float spinOffset;
     Vector3 basePosition;
@@ -35,15 +34,6 @@ public class Coin : MonoBehaviour
 
     void Update()
     {
-        if (ScoreSystem.MagnetActive)
-        {
-            Transform player = GetPlayer();
-            if (player != null && (player.position - transform.position).sqrMagnitude < 42f)
-            {
-                basePosition = Vector3.MoveTowards(basePosition, player.position, 12f * Time.deltaTime);
-            }
-        }
-
         float time = Time.time + spinOffset;
 
         float spin = Mathf.Cos(time * 5f);
@@ -65,20 +55,6 @@ public class Coin : MonoBehaviour
         RetroSfx.PlayCoin();
         JuiceManager.Burst(transform.position, new Color(1f, 0.84f, 0.25f), 9, 4.5f);
         Destroy(gameObject);
-    }
-
-    static Transform GetPlayer()
-    {
-        if (cachedPlayer == null)
-        {
-            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-            if (playerObject != null)
-            {
-                cachedPlayer = playerObject.transform;
-            }
-        }
-
-        return cachedPlayer;
     }
 
     static Sprite GetCoinSprite()
