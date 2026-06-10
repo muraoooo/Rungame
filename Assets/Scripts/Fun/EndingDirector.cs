@@ -34,6 +34,7 @@ public class EndingDirector : MonoBehaviour
     };
 
     SpriteRenderer playerRenderer;
+    Sprite endingSplash;
     bool active;
     bool statsAdded;
     float startTime;
@@ -44,6 +45,7 @@ public class EndingDirector : MonoBehaviour
     void Start()
     {
         instance = this;
+        endingSplash = Resources.Load<Sprite>("UI/EndingSplash");
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -126,11 +128,29 @@ public class EndingDirector : MonoBehaviour
         float scale = Mathf.Clamp(height / 1080f, 0.6f, 1.4f);
         float elapsed = Time.unscaledTime - startTime;
 
-        DrawNightSky(width, height, elapsed);
+        DrawEndingBackdrop(width, height, elapsed);
         DrawStars(width, height, scale, elapsed);
         DrawCredits(width, height, scale, elapsed);
         DrawRidingPlayer(width, height, scale, elapsed);
         DrawPrompt(width, height, scale, elapsed);
+    }
+
+    void DrawEndingBackdrop(float width, float height, float elapsed)
+    {
+        if (endingSplash == null)
+        {
+            DrawNightSky(width, height, elapsed);
+            return;
+        }
+
+        float alpha = Mathf.Clamp01(elapsed / 1.4f);
+        Color original = GUI.color;
+        GUI.color = new Color(1f, 1f, 1f, alpha);
+        DrawSprite(CoverRect(width, height, endingSplash), endingSplash);
+
+        GUI.color = new Color(0f, 0.01f, 0.04f, 0.24f * alpha);
+        GUI.DrawTexture(new Rect(0f, 0f, width, height), Texture2D.whiteTexture);
+        GUI.color = original;
     }
 
     void DrawNightSky(float width, float height, float elapsed)
@@ -284,5 +304,31 @@ public class EndingDirector : MonoBehaviour
         GUI.Label(new Rect(rect.x + 2f * scale, rect.y + 3f * scale, rect.width, rect.height), text, creditStyle);
         creditStyle.normal.textColor = color;
         GUI.Label(rect, text, creditStyle);
+    }
+
+    static void DrawSprite(Rect rect, Sprite sprite)
+    {
+        Texture2D texture = sprite.texture;
+        Rect uv = new Rect(
+            sprite.rect.x / texture.width,
+            sprite.rect.y / texture.height,
+            sprite.rect.width / texture.width,
+            sprite.rect.height / texture.height);
+        GUI.DrawTextureWithTexCoords(rect, texture, uv);
+    }
+
+    static Rect CoverRect(float width, float height, Sprite sprite)
+    {
+        float screenAspect = width / height;
+        float spriteAspect = sprite.rect.width / sprite.rect.height;
+
+        if (spriteAspect > screenAspect)
+        {
+            float drawWidth = height * spriteAspect;
+            return new Rect((width - drawWidth) * 0.5f, 0f, drawWidth, height);
+        }
+
+        float drawHeight = width / spriteAspect;
+        return new Rect(0f, (height - drawHeight) * 0.5f, width, drawHeight);
     }
 }

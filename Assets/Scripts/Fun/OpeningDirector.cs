@@ -13,6 +13,7 @@ public class OpeningDirector : MonoBehaviour
     SpriteRenderer playerRenderer;
     Sprite cloudA;
     Sprite cloudB;
+    Sprite openingSplash;
     Sprite coinSprite;
     GUIStyle logoStyle;
     GUIStyle textStyle;
@@ -21,6 +22,7 @@ public class OpeningDirector : MonoBehaviour
 
     void Start()
     {
+        openingSplash = Resources.Load<Sprite>("UI/OpeningSplash");
         cloudA = Resources.Load<Sprite>("Clouds/CloudA");
         cloudB = Resources.Load<Sprite>("Clouds/CloudB");
 
@@ -67,14 +69,35 @@ public class OpeningDirector : MonoBehaviour
         float scale = Mathf.Clamp(height / 1080f, 0.6f, 1.4f);
         float time = Time.unscaledTime;
 
-        DrawSky(width, height);
-        DrawSun(width, height, scale, time);
-        DrawClouds(width, height, scale, time);
+        if (openingSplash != null)
+        {
+            DrawOpeningSplash(width, height);
+        }
+        else
+        {
+            DrawSky(width, height);
+            DrawSun(width, height, scale, time);
+            DrawClouds(width, height, scale, time);
+        }
+
         DrawLogo(width, height, scale, time);
         DrawCoinRow(width, height, scale, time);
-        DrawRidingPlayer(width, height, scale, time);
+        if (openingSplash == null)
+        {
+            DrawRidingPlayer(width, height, scale, time);
+        }
         DrawPrompts(width, height, scale, time);
         DrawBestTimes(width, scale);
+    }
+
+    void DrawOpeningSplash(float width, float height)
+    {
+        DrawSprite(CoverRect(width, height, openingSplash), openingSplash, Color.white);
+
+        Color original = GUI.color;
+        GUI.color = new Color(0.02f, 0.04f, 0.08f, 0.18f);
+        GUI.DrawTexture(new Rect(0f, 0f, width, height), Texture2D.whiteTexture);
+        GUI.color = original;
     }
 
     void DrawSky(float width, float height)
@@ -331,5 +354,20 @@ public class OpeningDirector : MonoBehaviour
         GUI.color = color;
         GUI.DrawTexture(rect, texture);
         GUI.color = original;
+    }
+
+    static Rect CoverRect(float width, float height, Sprite sprite)
+    {
+        float screenAspect = width / height;
+        float spriteAspect = sprite.rect.width / sprite.rect.height;
+
+        if (spriteAspect > screenAspect)
+        {
+            float drawWidth = height * spriteAspect;
+            return new Rect((width - drawWidth) * 0.5f, 0f, drawWidth, height);
+        }
+
+        float drawHeight = width / spriteAspect;
+        return new Rect(0f, (height - drawHeight) * 0.5f, width, drawHeight);
     }
 }
