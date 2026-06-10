@@ -17,6 +17,7 @@ public class BossSlime : MonoBehaviour
     const float ArenaMaxX = 50.2f;
     const float IntroTriggerX = 36f;
     const float InvulnerableSeconds = 1.6f;
+    const float SpitTelegraphSeconds = 0.4f;
 
     GameObject barrier;
     Rigidbody2D body;
@@ -34,8 +35,10 @@ public class BossSlime : MonoBehaviour
     float nextHopTime;
     float nextSpitTime;
     float nextImmunePopupTime;
+    float spitTelegraphUntil;
     float frameTimer;
     int frame;
+    bool spitTelegraphing;
 
     public static BossSlime Spawn(Vector3 position, GameObject barrier)
     {
@@ -165,7 +168,12 @@ public class BossSlime : MonoBehaviour
             return;
         }
 
-        if (Time.time < invulnerableUntil)
+        if (Time.time < spitTelegraphUntil)
+        {
+            float flash = Mathf.Repeat(Time.unscaledTime * 14f, 1f) < 0.68f ? 1f : 0.82f;
+            spriteRenderer.color = Color.Lerp(baseColor, Color.white, flash);
+        }
+        else if (Time.time < invulnerableUntil)
         {
             bool flashOn = Mathf.Repeat(Time.unscaledTime * 10f, 1f) < 0.5f;
             spriteRenderer.color = flashOn ? Color.white : baseColor;
@@ -196,7 +204,7 @@ public class BossSlime : MonoBehaviour
         wasAirborne = !grounded;
 
         // Hop toward the player, faster while enraged
-        if (grounded && Time.time >= nextHopTime && player != null)
+        if (!spitTelegraphing && grounded && Time.time >= nextHopTime && player != null)
         {
             float direction = Mathf.Sign(player.position.x - transform.position.x);
             float hopSpeed = 2.6f + rage * 0.9f;
@@ -209,10 +217,9 @@ public class BossSlime : MonoBehaviour
         }
 
         // Spit poison globs in an arc
-        if (Time.time >= nextSpitTime && player != null)
+        if (!spitTelegraphing && Time.time >= nextSpitTime && player != null)
         {
-            SpitGlobs(rage);
-            nextSpitTime = Time.time + Mathf.Max(1.4f, 3.2f - rage * 0.7f);
+            StartCoroutine(TelegraphThenSpit(rage));
         }
 
         // Keep the boss inside its arena
@@ -225,18 +232,86 @@ public class BossSlime : MonoBehaviour
         }
     }
 
-    void SpitGlobs(int rage)
+    IEnumerator TelegraphThenSpit(int rage)
     {
-        RetroSfx.PlayShoot();
-        float direction = player != null ? Mathf.Sign(player.position.x - transform.position.x) : -1f;
-        int count = 2 + rage;
-        Vector3 mouth = transform.position + Vector3.up * 1f;
+        spitTelegraphing = true;
+        spitTelegraphUntil = Time.time + SpitTelegraphSeconds;
 
+        Vector3 baseScale = transform.localScale;
+        Vector3 mouth = transform.position + Vector3.up * 1f;
+        Vector2[] velocities = CreateSpitVelocities(rage);
+        ShowLandingWarnings(mouth, velocities);
+
+        float elapsed = 0f;
+        while (elapsed < SpitTelegraphSeconds)
+        {
+            if (defeated || GameSession.HasEnded)
+            {
+                transform.localScale = baseScale;
+                spitTelegraphing = false;
+                spitTelegraphUntil = 0f;
+                yield break;
+            }
+
+            float progress = elapsed / SpitTelegraphSeconds;
+            float swell = 1f + Mathf.Sin(progress * Mathf.PI) * 0.1f;
+            transform.localScale = new Vector3(baseScale.x * swell, baseScale.y * (1f + (swell - 1f) * 0.7f), baseScale.z);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = baseScale;
+        spitTelegraphing = false;
+        spitTelegraphUntil = 0f;
+
+        if (!defeated && GameSession.HasStarted && !GameSession.HasEnded)
+        {
+            SpitGlobs(mouth, velocities);
+        }
+
+        nextSpitTime = Time.time + Mathf.Max(1.4f, 3.2f - rage * 0.7f);
+    }
+
+    Vector2[] CreateSpitVelocities(int rage)
+    {
+        float direction = player != null ? Mathf.Sign(player.position.x - transform.position.x) : -1f;
+        if (direction == 0f)
+        {
+            direction = -1f;
+        }
+
+        int count = 2 + rage;
+        Vector2[] velocities = new Vector2[count];
         for (int i = 0; i < count; i++)
         {
             float speedX = direction * (3.2f + i * 1.6f);
             float speedY = 6.5f + Random.Range(-0.5f, 1.2f);
-            BossProjectile.Spawn(mouth, new Vector2(speedX, speedY));
+            velocities[i] = new Vector2(speedX, speedY);
+        }
+
+        return velocities;
+    }
+
+    void ShowLandingWarnings(Vector3 mouth, Vector2[] velocities)
+    {
+        foreach (Vector2 velocity in velocities)
+        {
+            Vector3 landingPoint;
+            float landingSeconds;
+            if (BossProjectile.TryPredictLanding(mouth, velocity, out landingPoint, out landingSeconds))
+            {
+                BossProjectile.ShowLandingMarker(landingPoint, SpitTelegraphSeconds + landingSeconds + 0.15f);
+            }
+        }
+    }
+
+    void SpitGlobs(Vector3 mouth, Vector2[] velocities)
+    {
+        RetroSfx.PlayShoot();
+        foreach (Vector2 velocity in velocities)
+        {
+            BossProjectile.Spawn(mouth, velocity);
         }
     }
 
@@ -279,10 +354,11 @@ public class BossSlime : MonoBehaviour
 
         Bounds playerBounds = playerCollider.bounds;
         Bounds bossBounds = bossCollider.bounds;
+        bool overlaps = playerBounds.max.x > bossBounds.min.x + 0.1f && playerBounds.min.x < bossBounds.max.x - 0.1f;
         bool feetNearTop = playerBounds.min.y >= bossBounds.max.y - 0.5f;
         bool above = playerBounds.center.y >= bossBounds.center.y + bossBounds.extents.y * 0.4f;
         bool falling = playerBody.linearVelocity.y <= 0.35f;
-        return feetNearTop && above && falling;
+        return overlaps && feetNearTop && above && falling;
     }
 
     void TakeHit(GameObject playerObject)

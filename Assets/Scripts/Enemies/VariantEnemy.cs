@@ -12,6 +12,13 @@ public enum VariantEnemyKind
 [RequireComponent(typeof(Collider2D))]
 public class VariantEnemy : MonoBehaviour
 {
+    const float BatSwoopDetectDistance = 5.2f;
+    const float BatSwoopPrepareSeconds = 0.3f;
+    const float BatSwoopDurationSeconds = 0.58f;
+    const float BatSwoopCooldownSeconds = 2.2f;
+    const float BatSwoopSpeed = 7.2f;
+    const float BatRecoverSpeed = 5.5f;
+
     public VariantEnemyKind kind;
     public float patrolDistance;
     public float patrolSpeed;
@@ -23,10 +30,19 @@ public class VariantEnemy : MonoBehaviour
     Collider2D enemyCollider;
     Rigidbody2D body;
     SpriteRenderer spriteRenderer;
+    Transform player;
     Vector3 startPosition;
+    Vector3 batWarningScale;
+    Color baseColor = Color.white;
     int moveDirection = -1;
     float nextBubbleTime;
+    float batSwoopReadyTime;
+    float batSwoopEndTime;
+    float nextBatSwoopTime;
+    Vector2 batSwoopVelocity;
     bool defeated;
+    bool batPreparingSwoop;
+    bool batSwooping;
 
     public static VariantEnemy Spawn(VariantEnemyKind kind, Vector3 position, float patrolSpeed = 0f, float patrolDistance = 0f)
     {
@@ -59,7 +75,9 @@ public class VariantEnemy : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         startPosition = transform.position;
+        baseColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
         nextBubbleTime = Time.time + Random.Range(0.5f, 1.2f);
+        nextBatSwoopTime = Time.time + Random.Range(0.8f, 1.4f);
     }
 
     void FixedUpdate()
@@ -98,13 +116,35 @@ public class VariantEnemy : MonoBehaviour
         {
             nextBubbleTime = Time.time + bubbleIntervalSeconds;
             Vector2 direction = FindPlayerDirection();
-            PettanBubble.Spawn(transform.position + new Vector3(0.15f * direction.x, 0.35f, 0f), new Vector2(direction.x * 3.4f, 4.7f));
-            RetroSfx.PlayShoot();
+            PettanBubble bubble = PettanBubble.Spawn(transform.position + new Vector3(0.15f * direction.x, 0.35f, 0f), new Vector2(direction.x * 3.4f, 4.7f));
+            if (bubble != null)
+            {
+                RetroSfx.PlayShoot();
+            }
         }
     }
 
     void UpdateBatFlight()
     {
+        Transform target = GetPlayerTransform();
+        if (batPreparingSwoop)
+        {
+            HoldBatSwoopWarning(target);
+            return;
+        }
+
+        if (batSwooping)
+        {
+            ContinueBatSwoop();
+            return;
+        }
+
+        if (Time.time >= nextBatSwoopTime && IsPlayerInSwoopRange(target))
+        {
+            BeginBatSwoopWarning(target);
+            return;
+        }
+
         float nextX = transform.position.x + moveDirection * patrolSpeed * Time.fixedDeltaTime;
         if (patrolDistance > 0f && Mathf.Abs(nextX - startPosition.x) > patrolDistance)
         {
@@ -112,9 +152,123 @@ public class VariantEnemy : MonoBehaviour
             nextX = Mathf.Clamp(nextX, startPosition.x - patrolDistance, startPosition.x + patrolDistance);
         }
 
-        float y = startPosition.y + Mathf.Sin(Time.time * flightFrequency) * flightAmplitude;
+        float targetY = startPosition.y + Mathf.Sin(Time.time * flightFrequency) * flightAmplitude;
+        float y = Mathf.MoveTowards(transform.position.y, targetY, BatRecoverSpeed * Time.fixedDeltaTime);
         body.MovePosition(new Vector2(nextX, y));
         FaceMoveDirection();
+    }
+
+    Transform GetPlayerTransform()
+    {
+        if (player != null)
+        {
+            return player;
+        }
+
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+        }
+
+        return player;
+    }
+
+    bool IsPlayerInSwoopRange(Transform target)
+    {
+        if (target == null || !GameSession.HasStarted)
+        {
+            return false;
+        }
+
+        Vector2 offset = target.position - transform.position;
+        bool closeHorizontally = Mathf.Abs(offset.x) <= BatSwoopDetectDistance;
+        bool playerIsBelowOrLevel = offset.y <= 0.9f;
+        bool notTooFarBelow = offset.y >= -4.2f;
+        return closeHorizontally && playerIsBelowOrLevel && notTooFarBelow;
+    }
+
+    void BeginBatSwoopWarning(Transform target)
+    {
+        batPreparingSwoop = true;
+        batSwoopReadyTime = Time.time + BatSwoopPrepareSeconds;
+        batWarningScale = transform.localScale;
+        FaceTarget(target);
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.Lerp(baseColor, Color.white, 0.88f);
+        }
+    }
+
+    void HoldBatSwoopWarning(Transform target)
+    {
+        body.MovePosition(body.position);
+        FaceTarget(target);
+
+        float pulse = 1f + Mathf.Sin(Time.time * 30f) * 0.05f;
+        transform.localScale = new Vector3(batWarningScale.x * 1.08f * pulse, batWarningScale.y * 0.9f, batWarningScale.z);
+
+        if (Time.time >= batSwoopReadyTime)
+        {
+            StartBatSwoop(target);
+        }
+    }
+
+    void StartBatSwoop(Transform target)
+    {
+        batPreparingSwoop = false;
+        batSwooping = true;
+        batSwoopEndTime = Time.time + BatSwoopDurationSeconds;
+        transform.localScale = batWarningScale;
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = baseColor;
+        }
+
+        Vector2 direction = Vector2.down;
+        if (target != null)
+        {
+            direction = (Vector2)(target.position + Vector3.up * 0.25f - transform.position);
+            if (direction.y > -0.25f)
+            {
+                direction.y = -0.25f;
+            }
+        }
+
+        batSwoopVelocity = direction.normalized * BatSwoopSpeed;
+        nextBatSwoopTime = Time.time + BatSwoopDurationSeconds + BatSwoopCooldownSeconds;
+    }
+
+    void ContinueBatSwoop()
+    {
+        Vector2 next = body.position + batSwoopVelocity * Time.fixedDeltaTime;
+        body.MovePosition(next);
+
+        if (Time.time >= batSwoopEndTime || transform.position.y <= startPosition.y - 3.2f)
+        {
+            batSwooping = false;
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = baseColor;
+            }
+        }
+    }
+
+    void FaceTarget(Transform target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        float direction = Mathf.Sign(target.position.x - transform.position.x);
+        if (direction != 0f)
+        {
+            moveDirection = direction < 0f ? -1 : 1;
+            FaceMoveDirection();
+        }
     }
 
     void PatrolGround()

@@ -2,13 +2,22 @@ using UnityEngine;
 
 public class PettanBubble : MonoBehaviour
 {
+    const int MaxActiveBubbles = 2;
+
     static Sprite bubbleSprite;
+    static int activeBubbleCount;
 
     float dieTime;
     bool popped;
+    bool counted;
 
     public static PettanBubble Spawn(Vector3 position, Vector2 velocity)
     {
+        if (activeBubbleCount >= MaxActiveBubbles)
+        {
+            return null;
+        }
+
         GameObject bubbleObject = new GameObject("PettanBubble");
         bubbleObject.transform.position = position;
 
@@ -27,7 +36,18 @@ public class PettanBubble : MonoBehaviour
 
         PettanBubble bubble = bubbleObject.AddComponent<PettanBubble>();
         bubble.dieTime = Time.time + 3.2f;
+        bubble.counted = true;
+        activeBubbleCount++;
         return bubble;
+    }
+
+    void OnDestroy()
+    {
+        if (counted)
+        {
+            activeBubbleCount = Mathf.Max(0, activeBubbleCount - 1);
+            counted = false;
+        }
     }
 
     void Update()
