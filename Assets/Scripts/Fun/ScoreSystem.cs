@@ -6,9 +6,13 @@ public static class ScoreSystem
     const float ComboWindowSeconds = 3.5f;
     const float FeverSeconds = 7f;
 
+    public const int SpecialChargeMax = 5;
+
     public static int Score { get; private set; }
     public static int Combo { get; private set; }
     public static int CoinsCollected { get; private set; }
+    public static int SpecialCharge { get; private set; }
+    public static bool SpecialReady => SpecialCharge >= SpecialChargeMax;
     public static bool NewRecord { get; private set; }
     public static float ScorePopTime { get; private set; }
 
@@ -26,6 +30,7 @@ public static class ScoreSystem
         Score = 0;
         Combo = 0;
         CoinsCollected = 0;
+        SpecialCharge = 0;
         NewRecord = false;
         comboEndTime = 0f;
         feverEndTime = 0f;
@@ -35,9 +40,16 @@ public static class ScoreSystem
     public static void AddCoin(Vector3 position)
     {
         CoinsCollected++;
+        bool wasReady = SpecialReady;
+        SpecialCharge = Mathf.Min(SpecialChargeMax, SpecialCharge + 1);
         int points = 100 * (IsFever ? 2 : 1);
         AddScore(points);
         JuiceManager.Popup(position, "+" + points, new Color(1f, 0.84f, 0.25f), 0.95f);
+
+        if (SpecialReady && !wasReady)
+        {
+            JuiceManager.Popup(position + Vector3.up * 0.9f, "W で ひっさつ READY!", new Color(0.6f, 1f, 0.45f), 1.1f);
+        }
     }
 
     public static void RegisterStomp(Vector3 position)
@@ -70,6 +82,17 @@ public static class ScoreSystem
         int points = 50 * (IsFever ? 2 : 1);
         AddScore(points);
         JuiceManager.Popup(position + Vector3.up * 0.6f, "TRICK +" + points, new Color(0.45f, 0.9f, 1f), 0.9f);
+    }
+
+    public static bool TryConsumeSpecial()
+    {
+        if (!SpecialReady)
+        {
+            return false;
+        }
+
+        SpecialCharge = 0;
+        return true;
     }
 
     public static void OnGoal(float clearTime)

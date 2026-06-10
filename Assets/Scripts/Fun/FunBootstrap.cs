@@ -55,6 +55,11 @@ public class FunBootstrap : MonoBehaviour
                 player.AddComponent<PlayerDash>();
             }
 
+            if (player.GetComponent<SpecialAttack>() == null)
+            {
+                player.AddComponent<SpecialAttack>();
+            }
+
             if (player.GetComponent<PlayerAttackShooter>() == null)
             {
                 player.AddComponent<PlayerAttackShooter>();

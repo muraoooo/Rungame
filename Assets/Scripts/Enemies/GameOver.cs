@@ -312,6 +312,11 @@ public class GameOver : MonoBehaviour
         return Mathf.Max(stompCheckMargin, MinimumStompMargin);
     }
 
+    public void DefeatBySpecial(Vector3 sourcePosition)
+    {
+        DefeatEnemy(null, sourcePosition);
+    }
+
     void DefeatEnemy(GameObject player, Vector3 hitSourcePosition)
     {
         if (isDefeated)

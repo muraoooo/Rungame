@@ -14,6 +14,8 @@ public static class RetroSfx
     static AudioClip feverClip;
     static AudioClip fanfareClip;
     static AudioClip gameOverClip;
+    static AudioClip cutinClip;
+    static AudioClip specialBoomClip;
 
     public static void PlayJump()
     {
@@ -126,6 +128,38 @@ public static class RetroSfx
         }
 
         Play(gameOverClip);
+    }
+
+    public static void PlayCutin()
+    {
+        if (cutinClip == null)
+        {
+            cutinClip = SynthClip("Sfx_Cutin", 0.7f, time =>
+            {
+                float riser = Mathf.Sin(SweepPhase(time, 180f, 1500f, 0.7f) * Mathf.PI * 2f);
+                float tremolo = 0.7f + 0.3f * Mathf.Sin(time * 42f * Mathf.PI * 2f);
+                return riser * tremolo * Mathf.Clamp01(time / 0.05f) * 0.3f;
+            });
+        }
+
+        Play(cutinClip);
+    }
+
+    public static void PlaySpecialBoom()
+    {
+        if (specialBoomClip == null)
+        {
+            System.Random random = new System.Random(424242);
+            specialBoomClip = SynthClip("Sfx_SpecialBoom", 0.65f, time =>
+            {
+                float body = Mathf.Sin(SweepPhase(time, 150f, 35f, 0.65f) * Mathf.PI * 2f);
+                float noise = ((float)random.NextDouble() * 2f - 1f) * 0.55f;
+                float envelope = Decay(time, 0.65f);
+                return (body + noise * envelope) * envelope * 0.6f;
+            });
+        }
+
+        Play(specialBoomClip);
     }
 
     static void Play(AudioClip clip)

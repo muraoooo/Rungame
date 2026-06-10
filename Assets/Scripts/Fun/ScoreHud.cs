@@ -60,6 +60,20 @@ public class ScoreHud : MonoBehaviour
             Rect bestRect = new Rect(Screen.width - 420f * scale, (18f + 90f) * scale, 400f * scale, 30f * scale);
             DrawOutlined(bestRect, "BEST " + FormatTime(best), infoStyle, new Color(0.7f, 0.95f, 1f));
         }
+
+        infoStyle.fontSize = Mathf.RoundToInt(24f * scale);
+        Rect specialRect = new Rect(Screen.width - 420f * scale, (18f + 122f) * scale, 400f * scale, 32f * scale);
+        if (ScoreSystem.SpecialReady)
+        {
+            Color rainbow = Color.HSVToRGB(Mathf.Repeat(Time.unscaledTime * 1.8f, 1f), 0.7f, 1f);
+            DrawOutlined(specialRect, "W: ひっさつ READY!!", infoStyle, rainbow);
+        }
+        else
+        {
+            string gauge = new string('★', ScoreSystem.SpecialCharge)
+                + new string('☆', ScoreSystem.SpecialChargeMax - ScoreSystem.SpecialCharge);
+            DrawOutlined(specialRect, "W: " + gauge, infoStyle, new Color(0.75f, 0.8f, 0.85f));
+        }
     }
 
     void DrawCombo(float scale)
@@ -100,14 +114,14 @@ public class ScoreHud : MonoBehaviour
             return;
         }
 
-        hintStyle.fontSize = Mathf.RoundToInt(28f * scale);
-        Rect rect = new Rect(0f, Screen.height - 110f * scale, Screen.width, 40f * scale);
-        DrawOutlined(rect, "←→:はしる SPACE:ジャンプ Q:アクロバット F:こうげき SHIFT:ダッシュ", hintStyle, Color.white);
-
+        hintStyle.fontSize = Mathf.RoundToInt(27f * scale);
+        Rect startRect = new Rect(0f, Screen.height - 104f * scale, Screen.width, 36f * scale);
         float blink = 0.6f + Mathf.Sin(Time.unscaledTime * 5f) * 0.4f;
-        hintStyle.fontSize = Mathf.RoundToInt(30f * scale);
-        Rect startRect = new Rect(0f, Screen.height - 62f * scale, Screen.width, 40f * scale);
         DrawOutlined(startRect, "SPACE でスタート!", hintStyle, new Color(1f, 0.95f, 0.5f, blink));
+
+        hintStyle.fontSize = Mathf.RoundToInt(20f * scale);
+        Rect controlsRect = new Rect(0f, Screen.height - 56f * scale, Screen.width, 30f * scale);
+        DrawOutlined(controlsRect, "←→:はしる SPACE:ジャンプ Q:アクロバット F:こうげき SHIFT:ダッシュ W:ひっさつ", hintStyle, Color.white);
     }
 
     void DrawEndPanel(float scale)
@@ -117,26 +131,28 @@ public class ScoreHud : MonoBehaviour
             return;
         }
 
+        // Bottom-anchored rows with fixed spacing so nothing overlaps:
+        // NEW RECORD (height-190) > time/score (height-124) > restart hint (height-58).
         if (GameSession.ReachedGoal)
         {
-            bigStyle.fontSize = Mathf.RoundToInt(40f * scale);
-            Rect timeRect = new Rect(0f, Screen.height * 0.5f + 150f * scale, Screen.width, 56f * scale);
+            bigStyle.fontSize = Mathf.RoundToInt(34f * scale);
+            Rect timeRect = new Rect(0f, Screen.height - 124f * scale, Screen.width, 46f * scale);
             DrawOutlined(timeRect, "タイム " + FormatTime(GameSession.ElapsedTime) + "   スコア " + ScoreSystem.Score.ToString("N0"), bigStyle, Color.white);
 
             if (ScoreSystem.NewRecord)
             {
                 Color rainbow = Color.HSVToRGB(Mathf.Repeat(Time.unscaledTime * 2f, 1f), 0.8f, 1f);
-                float pulse = 1f + Mathf.Sin(Time.unscaledTime * 10f) * 0.12f;
-                bigStyle.fontSize = Mathf.RoundToInt(56f * scale * pulse);
-                Rect recordRect = new Rect(0f, Screen.height * 0.5f + 205f * scale, Screen.width, 80f * scale);
+                float pulse = 1f + Mathf.Sin(Time.unscaledTime * 10f) * 0.1f;
+                bigStyle.fontSize = Mathf.RoundToInt(46f * scale * pulse);
+                Rect recordRect = new Rect(0f, Screen.height - 190f * scale, Screen.width, 60f * scale);
                 DrawOutlined(recordRect, "★ NEW RECORD!! ★", bigStyle, rainbow);
             }
         }
 
         float blink = 0.55f + Mathf.Sin(Time.unscaledTime * 4.5f) * 0.45f;
-        hintStyle.fontSize = Mathf.RoundToInt(34f * scale);
-        Rect rect2 = new Rect(0f, Screen.height - 70f * scale, Screen.width, 46f * scale);
-        DrawOutlined(rect2, "R か ENTER で もういちど!", hintStyle, new Color(1f, 1f, 1f, blink));
+        hintStyle.fontSize = Mathf.RoundToInt(30f * scale);
+        Rect restartRect = new Rect(0f, Screen.height - 58f * scale, Screen.width, 40f * scale);
+        DrawOutlined(restartRect, "R か ENTER で もういちど!", hintStyle, new Color(1f, 1f, 1f, blink));
     }
 
     void DrawOutlined(Rect rect, string text, GUIStyle style, Color color)

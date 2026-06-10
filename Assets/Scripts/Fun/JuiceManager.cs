@@ -71,7 +71,7 @@ public class JuiceManager : MonoBehaviour
 
     public static void HitStop(float seconds)
     {
-        if (Instance == null || !GameSession.HasStarted || GameSession.HasEnded)
+        if (Instance == null || !GameSession.HasStarted || GameSession.HasEnded || SpecialCutin.IsPlaying)
         {
             return;
         }
@@ -89,7 +89,7 @@ public class JuiceManager : MonoBehaviour
         Time.timeScale = 0.05f;
         yield return new WaitForSecondsRealtime(seconds);
 
-        if (GameSession.HasStarted && !GameSession.HasEnded)
+        if (GameSession.HasStarted && !GameSession.HasEnded && !SpecialCutin.IsPlaying)
         {
             Time.timeScale = 1f;
         }
