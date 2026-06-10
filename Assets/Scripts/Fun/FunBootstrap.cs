@@ -45,6 +45,8 @@ public class FunBootstrap : MonoBehaviour
             manager.AddComponent<JuiceManager>();
             manager.AddComponent<ScoreHud>();
             manager.AddComponent<RestartController>();
+            manager.AddComponent<OpeningDirector>();
+            manager.AddComponent<EndingDirector>();
         }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");

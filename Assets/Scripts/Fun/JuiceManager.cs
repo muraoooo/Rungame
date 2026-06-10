@@ -145,6 +145,23 @@ public class JuiceManager : MonoBehaviour
         }
     }
 
+    public static void Firework(Vector3 position, Color color)
+    {
+        if (Instance == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < 26; i++)
+        {
+            float angle = (i / 26f) * Mathf.PI * 2f + Random.Range(-0.1f, 0.1f);
+            float magnitude = Random.Range(3.2f, 5.4f);
+            Vector2 velocity = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * magnitude;
+            Color sparkColor = Random.value < 0.25f ? Color.white : color;
+            Instance.SpawnParticle(position, sparkColor, velocity, 3.5f, Random.Range(0.9f, 1.4f), Random.Range(0.7f, 1.2f));
+        }
+    }
+
     public static void Dust(Vector3 position, int count)
     {
         if (Instance == null)

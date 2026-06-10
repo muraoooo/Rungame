@@ -33,6 +33,12 @@ public class ScoreHud : MonoBehaviour
 
     void OnGUI()
     {
+        // The opening director owns the whole title screen.
+        if (!GameSession.HasStarted)
+        {
+            return;
+        }
+
         EnsureStyles();
         float scale = Mathf.Clamp(Screen.height / 1080f, 0.74f, 1.2f);
 
@@ -199,7 +205,8 @@ public class ScoreHud : MonoBehaviour
 
     void DrawEndPanel(float scale)
     {
-        if (!GameSession.HasEnded)
+        // The ending director owns the final-clear screen.
+        if (!GameSession.HasEnded || EndingDirector.IsActive)
         {
             return;
         }
