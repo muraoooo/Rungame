@@ -84,8 +84,8 @@ public class FunBootstrap : MonoBehaviour
     {
         yield return null;
         StageArtBootstrap.Build(LevelManager.CurrentStage);
+        LevelStretcher.Apply(LevelManager.CurrentStage);
         LevelBuilder.Build(LevelManager.CurrentStage);
-        // Final stage: no coins in the boss arena
-        CoinSpawner.SpawnLevelCoins(LevelManager.CurrentStage >= LevelManager.MaxStage ? 36f : 50f);
+        CoinSpawner.SpawnLevelCoins(LevelStretcher.CoinEndXForStage(LevelManager.CurrentStage));
     }
 }
