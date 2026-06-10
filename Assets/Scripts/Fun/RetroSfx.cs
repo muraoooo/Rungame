@@ -17,6 +17,7 @@ public static class RetroSfx
     static AudioClip cutinClip;
     static AudioClip specialBoomClip;
     static AudioClip springClip;
+    static AudioClip roarClip;
 
     public static void PlayJump()
     {
@@ -129,6 +130,22 @@ public static class RetroSfx
         }
 
         Play(gameOverClip);
+    }
+
+    public static void PlayRoar()
+    {
+        if (roarClip == null)
+        {
+            roarClip = SynthClip("Sfx_Roar", 0.55f, time =>
+            {
+                float vibrato = 1f + Mathf.Sin(time * 30f * Mathf.PI * 2f) * 0.06f;
+                float growl = Square(SweepPhase(time, 130f * vibrato, 55f, 0.55f));
+                float envelope = Mathf.Sin(Mathf.Clamp01(time / 0.55f) * Mathf.PI);
+                return growl * envelope * 0.3f;
+            });
+        }
+
+        Play(roarClip);
     }
 
     public static void PlaySpring()

@@ -2,10 +2,9 @@ using UnityEngine;
 
 public static class CoinSpawner
 {
-    public static void SpawnLevelCoins()
+    public static void SpawnLevelCoins(float endX = 50f)
     {
         float startX = -4f;
-        float endX = 50f;
         float step = 2.4f;
         int column = 0;
 

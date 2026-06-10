@@ -99,6 +99,12 @@ public static class ScoreSystem
         return true;
     }
 
+    public static void AddBonus(int points, Vector3 position, string label)
+    {
+        AddScore(points);
+        JuiceManager.Popup(position, label + " +" + points, new Color(1f, 0.9f, 0.3f), 1.3f);
+    }
+
     public static void ActivateMagnet(float seconds)
     {
         magnetEndTime = Time.time + seconds;

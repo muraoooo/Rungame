@@ -45,6 +45,7 @@ public class RestartController : MonoBehaviour
             if (keyboard.digit1Key.wasPressedThisFrame) selected = 1;
             if (keyboard.digit2Key.wasPressedThisFrame) selected = 2;
             if (keyboard.digit3Key.wasPressedThisFrame) selected = 3;
+            if (keyboard.digit4Key.wasPressedThisFrame) selected = 4;
 
             if (selected > 0 && selected != LevelManager.CurrentStage)
             {

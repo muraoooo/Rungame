@@ -42,6 +42,7 @@ public class ScoreHud : MonoBehaviour
         DrawCombo(scale);
         DrawFever(scale);
         DrawMagnet(scale);
+        DrawBossHealth(scale);
         DrawStartHint(scale);
         DrawEndPanel(scale);
     }
@@ -83,8 +84,24 @@ public class ScoreHud : MonoBehaviour
         {
             case 1: return "はしりだそう!";
             case 2: return "トゲに ちゅうい!";
-            default: return "さいごの しれん!!";
+            case 3: return "さいごの しれん!!";
+            default: return "キングスライムの しろ…";
         }
+    }
+
+    void DrawBossHealth(float scale)
+    {
+        if (!BossSlime.BossFightActive || GameSession.HasEnded)
+        {
+            return;
+        }
+
+        BossSlime boss = BossSlime.Instance;
+        float pulse = 1f + Mathf.Sin(Time.unscaledTime * 6f) * 0.05f;
+        bigStyle.fontSize = Mathf.RoundToInt(38f * scale * pulse);
+        string hearts = new string('★', boss.Health) + new string('☆', boss.maxHealth - boss.Health);
+        Rect rect = new Rect(0f, 150f * scale, Screen.width, 50f * scale);
+        DrawOutlined(rect, "キングスライム " + hearts, bigStyle, new Color(1f, 0.45f, 0.85f));
     }
 
     void DrawMagnet(float scale)
@@ -177,7 +194,7 @@ public class ScoreHud : MonoBehaviour
 
         hintStyle.fontSize = Mathf.RoundToInt(20f * scale);
         Rect controlsRect = new Rect(0f, Screen.height - 56f * scale, Screen.width, 30f * scale);
-        DrawOutlined(controlsRect, "←→:はしる SPACE:ジャンプ Q:アクロバット F:こうげき SHIFT:ダッシュ W:ひっさつ 1・2・3:ステージ", hintStyle, Color.white);
+        DrawOutlined(controlsRect, "←→:はしる SPACE:ジャンプ Q:アクロバット F:こうげき SHIFT:ダッシュ W:ひっさつ 1〜4:ステージ", hintStyle, Color.white);
     }
 
     void DrawEndPanel(float scale)

@@ -14,8 +14,11 @@ public static class LevelBuilder
             case 2:
                 BuildStage2();
                 break;
-            default:
+            case 3:
                 BuildStage3();
+                break;
+            default:
+                BuildStage4();
                 break;
         }
     }
@@ -68,6 +71,100 @@ public static class LevelBuilder
         SpawnSpringOnGround(12f);
         SpawnSpringOnGround(33f);
         SpawnMagnetOnGround(40f, 1.3f);
+    }
+
+    // 1-4: the castle. Dark mood, precision spike rhythm, a lift crossing over
+    // a long death zone, and the King Slime boss guarding the goal.
+    static void BuildStage4()
+    {
+        CreateDarkOverlay();
+        TuneExistingSlimes(1.8f, 5f, 0.15f);
+
+        // Rhythm section: evenly spaced spikes force precise jump timing
+        SpawnSpikeOnGround(5f, 1.8f);
+        SpawnSpikeOnGround(8.5f, 1.8f);
+        SpawnSpikeOnGround(12f, 1.8f);
+        SpawnExtraSlime(10f, 2f, 1.6f, true);
+
+        SpawnExtraSlime(16f, 3.8f, 3f, false);
+        SpawnExtraSlime(19f, 2.2f, 1.8f, true);
+
+        // Death zone: a continuous spike field crossed by lifts
+        // (or by spring + mid-air dash for the brave)
+        SpawnSpringOnGround(21.5f);
+        SpawnSpikeOnGround(24f, 2.4f);
+        SpawnSpikeOnGround(26.4f, 2.4f);
+        SpawnSpikeOnGround(28.8f, 2.4f);
+        SpawnSpikeOnGround(31.2f, 2.4f);
+        SpawnLiftOnGround(23f, 1.4f, 2.6f, 2.6f);
+        SpawnLiftOnGround(28f, 1.4f, 2.8f, 2.4f);
+
+        // Last breath before the arena
+        SpawnSpikeOnGround(34.5f, 1.8f);
+        SpawnSpikeOnGround(37f, 1.8f);
+
+        // Boss arena: barrier seals the goal until the King falls
+        GameObject barrier = CreateBossBarrier(51f);
+        Vector2 arenaGround;
+        if (CoinSpawner.TryFindGround(47f, out arenaGround))
+        {
+            BossSlime.Spawn(new Vector3(arenaGround.x, arenaGround.y + 2.5f, 0f), barrier);
+        }
+    }
+
+    static void CreateDarkOverlay()
+    {
+        GameObject overlay = new GameObject("StageDarkOverlay");
+        overlay.transform.position = new Vector3(22f, 2f, 0f);
+        overlay.transform.localScale = new Vector3(95f, 45f, 1f);
+
+        SpriteRenderer renderer = overlay.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSolidSprite();
+        renderer.color = new Color(0.12f, 0.04f, 0.22f, 0.48f);
+        renderer.sortingOrder = 5;
+    }
+
+    static GameObject CreateBossBarrier(float x)
+    {
+        Vector2 groundPoint;
+        if (!CoinSpawner.TryFindGround(x, out groundPoint))
+        {
+            groundPoint = new Vector2(x, -2.8f);
+        }
+
+        GameObject barrier = new GameObject("BossBarrier");
+        barrier.transform.position = new Vector3(groundPoint.x, groundPoint.y + 4f, 0f);
+        barrier.transform.localScale = new Vector3(0.7f, 9f, 1f);
+
+        SpriteRenderer renderer = barrier.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSolidSprite();
+        renderer.color = new Color(0.6f, 0.3f, 1f, 0.55f);
+        renderer.sortingOrder = 11;
+
+        barrier.AddComponent<BoxCollider2D>();
+        barrier.AddComponent<BarrierPulse>();
+        return barrier;
+    }
+
+    static Sprite solidSprite;
+
+    static Sprite CreateSolidSprite()
+    {
+        if (solidSprite != null)
+        {
+            return solidSprite;
+        }
+
+        Texture2D texture = new Texture2D(4, 4, TextureFormat.RGBA32, false);
+        Color[] pixels = new Color[16];
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            pixels[i] = Color.white;
+        }
+        texture.SetPixels(pixels);
+        texture.Apply();
+        solidSprite = Sprite.Create(texture, new Rect(0f, 0f, 4f, 4f), new Vector2(0.5f, 0.5f), 4f);
+        return solidSprite;
     }
 
     static void TuneExistingSlimes(float speedMultiplier, float moveSeconds, float pauseSeconds)
@@ -150,5 +247,32 @@ public static class LevelBuilder
         {
             MagnetItem.Spawn(new Vector3(groundPoint.x, groundPoint.y + aboveGround, 0f));
         }
+    }
+}
+
+// Slow magical pulse for the boss barrier.
+public class BarrierPulse : MonoBehaviour
+{
+    SpriteRenderer spriteRenderer;
+    Color baseColor;
+
+    void Start()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            baseColor = spriteRenderer.color;
+        }
+    }
+
+    void Update()
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        float pulse = 0.4f + Mathf.PingPong(Time.unscaledTime * 0.5f, 0.3f);
+        spriteRenderer.color = new Color(baseColor.r, baseColor.g, baseColor.b, pulse);
     }
 }
