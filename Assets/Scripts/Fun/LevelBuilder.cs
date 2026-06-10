@@ -52,9 +52,9 @@ public static class LevelBuilder
         SpawnSpringOnGround(18f);
         SpawnCheckpointOnGround(24f);
 
-        SpawnMedalOnGround(13f, 2.9f, 0);
-        SpawnMedalOnGround(27f, 3f, 1);
-        SpawnMedalOnGround(41f, 3f, 2);
+        SpawnMedalOnGround(13f, 2.3f, 0);
+        SpawnMedalOnGround(27f, 2.3f, 1);
+        SpawnMedalOnGround(41f, 2.3f, 2);
 
         // First-timers get contextual coaching; veterans (anyone with a
         // recorded clear) never see these.
@@ -81,7 +81,7 @@ public static class LevelBuilder
         SpawnVariantOnGround(VariantEnemyKind.Togemaru, 11.8f, 0f, 0f, 0.7f);
         // Second Togemaru moved off the spring at x38 - bouncing onto an
         // unstompable enemy was a trap. Now a static guard on open ground.
-        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 41.5f, 0f, 0f, 0.7f);
+        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 96f, 0f, 0f, 0.7f);
         SpawnExtraSlime(16f, 3.2f, 3f, false);
         SpawnExtraSlime(30f, 2f, 2.5f, false);
         SpawnExtraSlime(44f, 1.8f, 2f, true);
@@ -96,7 +96,7 @@ public static class LevelBuilder
         SpawnMagnetOnGround(25f, 1.3f);
         SpawnCheckpointOnGround(26.5f);
 
-        SpawnMedalOnGround(8f, 3f, 0);
+        SpawnMedalOnGround(8f, 2.3f, 0);
         SpawnMedalOnGround(21f, 1.5f, 1);
         SpawnMedalOnGround(33f, 4.4f, 2);
     }
@@ -108,26 +108,26 @@ public static class LevelBuilder
 
         SpawnSpikeOnGround(6f, 2f);
         SpawnSpikeOnGround(14f, 2.2f);
-        SpawnSpikeOnGround(22f, 2f);
-        SpawnSpikeOnGround(30f, 2.4f);
-        SpawnSpikeOnGround(38f, 2f);
-        SpawnSpikeOnGround(45f, 2.2f);
+        SpawnSpikeOnGround(20.4f, 2f);
+        SpawnSpikeOnGround(42.8f, 2.4f);
+        SpawnSpikeOnGround(47f, 2f);
+        SpawnSpikeOnGround(52f, 2.2f);
 
-        SpawnExtraSlime(10f, 3.6f, 3f, false);
-        SpawnExtraSlime(18f, 2f, 2f, true);
-        SpawnExtraSlime(28f, 3.6f, 3.5f, false);
-        SpawnExtraSlime(36f, 2.2f, 2f, true);
-        SpawnExtraSlime(47f, 2.8f, 2.5f, false);
+        SpawnExtraSlime(23.4f, 3.6f, 3f, false);
+        SpawnExtraSlime(26.8f, 2f, 2f, true);
+        SpawnExtraSlime(30.2f, 3.6f, 3.5f, false);
+        SpawnExtraSlime(33.6f, 2.2f, 2f, true);
+        SpawnExtraSlime(37f, 2.8f, 2.5f, false);
         SpawnExtraSlime(50f, 2f, 1.5f, true);
         // Pettan nudged off the spike-22 landing zone; Kabuton moved out of
         // its old patrol (29.6-34.4) that walked through spike 30 and the
         // spring at 33 - now patrols clear ground past spike 38.
-        SpawnVariantOnGround(VariantEnemyKind.Pettan, 24.6f, 0f, 0f, 0.65f);
-        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 40.5f, 1f, 1f, 0.72f);
+        SpawnVariantOnGround(VariantEnemyKind.Pettan, 18.8f, 0f, 0f, 0.65f);
+        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 96f, 1f, 1f, 0.72f);
 
         if (IsFirstVisit(3))
         {
-            SpawnHintOnGround(39f, "カブトンは まえが かたい! うえから ふもう!");
+            SpawnHintOnGround(96f, "カブトンは まえが かたい! うえから ふもう!");
         }
 
         SpawnLiftOnGround(20f, 1.6f, 3f, 3f);
@@ -136,7 +136,7 @@ public static class LevelBuilder
         SpawnSpringOnGround(33f);
         SpawnMagnetOnGround(40f, 1.3f);
         SpawnCheckpointOnGround(16.5f);
-        SpawnCheckpointOnGround(33.5f);
+        SpawnCheckpointOnGround(38.6f);
 
         SpawnMedalOnGround(12f, 4.6f, 0);
         SpawnMedalOnGround(20f, 4.4f, 1);
@@ -177,15 +177,15 @@ public static class LevelBuilder
         SpawnExtraSlime(14f, 2.6f, 2.2f, false);
         SpawnExtraSlime(26f, 2f, 1.8f, true);
         SpawnExtraSlime(43f, 3f, 2.5f, false);
-        SpawnBatkin(18.5f, 1.6f, 1.2f, 2.4f);
-        SpawnBatkin(39.5f, 1.8f, 1.4f, 2.8f);
+        SpawnBatkin(24.8f, 1.6f, 0f, 0f);
+        SpawnBatkin(96f, 1.8f, 1.4f, 2.8f);
 
         SpawnLiftOnGround(36.5f, 1.5f, 2.6f, 3f);
         SpawnSpringOnGround(31f);
         SpawnMagnetOnGround(24f, 1.3f);
 
-        SpawnCheckpointOnGround(17.5f);
-        SpawnCheckpointOnGround(33.5f);
+        SpawnCheckpointOnGround(15.5f);
+        SpawnCheckpointOnGround(31.8f);
 
         if (IsFirstVisit(4))
         {
@@ -275,7 +275,7 @@ public static class LevelBuilder
         SpawnLiftOnGround(28f, 1.4f, 2.8f, 2.4f);
 
         // Last breath before the arena
-        SpawnSpikeOnGround(34.5f, 1.8f);
+        SpawnSpikeOnGround(33.6f, 1.8f);
         SpawnSpikeOnGround(37f, 1.8f);
         // Old Togemaru at 35.7 sat in the 0.7-unit gap between the two
         // spikes - physically impassable on the ground. Now a static gate
@@ -283,12 +283,12 @@ public static class LevelBuilder
         // over the checkpoint (38.5) and the spring (41). Batkin removed:
         // boss globs + flying enemy + spring arcs was overload.
         SpawnVariantOnGround(VariantEnemyKind.Togemaru, 44.3f, 0f, 0f, 0.7f);
-        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 39.8f, 0f, 0f, 0.72f);
+        SpawnVariantOnGround(VariantEnemyKind.Kabuton, 42.4f, 0f, 0f, 0.72f);
 
         SpawnCheckpointOnGround(17f);
         SpawnCheckpointOnGround(38.5f);
 
-        SpawnMedalOnGround(8.5f, 3.2f, 0);
+        SpawnMedalOnGround(8.5f, 2.3f, 0);
         SpawnMedalOnGround(28f, 4.8f, 1);
         SpawnMedalOnGround(47f, 3.6f, 2);
 
