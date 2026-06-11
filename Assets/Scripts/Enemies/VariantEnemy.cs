@@ -83,10 +83,10 @@ public class VariantEnemy : MonoBehaviour
     {
         switch (kind)
         {
-            case VariantEnemyKind.Batkin: return 0.95f;
-            case VariantEnemyKind.Togemaru: return 1.05f;
-            case VariantEnemyKind.Pettan: return 1.15f;
-            case VariantEnemyKind.Kabuton: return 1f;
+            case VariantEnemyKind.Batkin: return 1.55f;
+            case VariantEnemyKind.Togemaru: return 1.55f;
+            case VariantEnemyKind.Pettan: return 1.85f;
+            case VariantEnemyKind.Kabuton: return 1.65f;
             default: return 1f;
         }
     }

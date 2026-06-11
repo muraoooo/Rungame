@@ -56,7 +56,7 @@ public class BossSlime : MonoBehaviour
             // scale to a proper boss presence of ~3 units regardless of PPU.
             if (kingSprite.bounds.size.y > 0.01f)
             {
-                bossObject.transform.localScale = Vector3.one * (3f / kingSprite.bounds.size.y);
+                bossObject.transform.localScale = Vector3.one * (3.35f / kingSprite.bounds.size.y);
             }
         }
         else
@@ -74,8 +74,8 @@ public class BossSlime : MonoBehaviour
         if (renderer.sprite != null)
         {
             Bounds spriteBounds = renderer.sprite.bounds;
-            collider.size = new Vector2(spriteBounds.size.x * 0.8f, spriteBounds.size.y * 0.55f);
-            collider.offset = new Vector2(spriteBounds.center.x, spriteBounds.center.y - spriteBounds.extents.y * 0.22f);
+            collider.size = new Vector2(spriteBounds.size.x * 0.8f, spriteBounds.size.y * 0.85f);
+            collider.offset = new Vector2(spriteBounds.center.x, spriteBounds.center.y - spriteBounds.extents.y * 0.03f);
         }
 
         Rigidbody2D body = bossObject.AddComponent<Rigidbody2D>();
