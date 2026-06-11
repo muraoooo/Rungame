@@ -117,6 +117,6 @@ public class RestartController : MonoBehaviour
             return;
         }
 
-        RespawnSystem.KillPlayer(player.gameObject);
+        RespawnSystem.KillPlayer(player.gameObject, "おちた!");
     }
 }

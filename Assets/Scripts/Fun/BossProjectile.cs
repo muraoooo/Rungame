@@ -116,7 +116,7 @@ public class BossProjectile : MonoBehaviour
                 return;
             }
 
-            RespawnSystem.KillPlayer(other.gameObject);
+            RespawnSystem.KillPlayer(other.gameObject, "どくだま!");
             Explode();
             return;
         }

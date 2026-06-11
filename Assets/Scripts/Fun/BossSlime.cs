@@ -49,6 +49,12 @@ public class BossSlime : MonoBehaviour
         {
             renderer.sprite = kingSprite;
             renderer.color = Color.white;
+            // The generated sprite imports at PPU 1024 (~0.5 units tall);
+            // scale to a proper boss presence of ~3 units regardless of PPU.
+            if (kingSprite.bounds.size.y > 0.01f)
+            {
+                bossObject.transform.localScale = Vector3.one * (3f / kingSprite.bounds.size.y);
+            }
         }
         else
         {
@@ -71,6 +77,7 @@ public class BossSlime : MonoBehaviour
 
         Rigidbody2D body = bossObject.AddComponent<Rigidbody2D>();
         body.bodyType = RigidbodyType2D.Dynamic;
+        body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         body.gravityScale = 3.2f;
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
         body.interpolation = RigidbodyInterpolation2D.Interpolate;
@@ -346,7 +353,7 @@ public class BossSlime : MonoBehaviour
 
     void KillPlayer(GameObject playerObject)
     {
-        RespawnSystem.KillPlayer(playerObject);
+        RespawnSystem.KillPlayer(playerObject, "ぶつかった!");
     }
 
     void OnTriggerEnter2D(Collider2D other)

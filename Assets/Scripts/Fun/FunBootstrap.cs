@@ -51,6 +51,8 @@ public class FunBootstrap : MonoBehaviour
             manager.AddComponent<MusicDirector>();
         }
 
+        TuneCamera();
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -78,6 +80,26 @@ public class FunBootstrap : MonoBehaviour
         }
 
         StartCoroutine(BuildLevelNextFrame());
+    }
+
+    // Wider view + forward look-ahead. The scene ships with orthographic
+    // size 5 and a centered camera - too tight to react at run speed, and
+    // a classic action-game NG (you cannot see what you are running into).
+    void TuneCamera()
+    {
+        Camera camera = Camera.main;
+        if (camera == null || !camera.orthographic)
+        {
+            return;
+        }
+
+        camera.orthographicSize = 6.1f;
+
+        CameraFollowClamp2 follow = camera.GetComponent<CameraFollowClamp2>();
+        if (follow != null)
+        {
+            follow.offset = new Vector3(2.2f, follow.offset.y, follow.offset.z);
+        }
     }
 
     IEnumerator BuildLevelNextFrame()

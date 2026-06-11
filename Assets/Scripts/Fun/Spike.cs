@@ -39,7 +39,7 @@ public class Spike : MonoBehaviour
             return;
         }
 
-        RespawnSystem.KillPlayer(other.gameObject);
+        RespawnSystem.KillPlayer(other.gameObject, "トゲ!");
     }
 
     static Sprite GetSpikeSprite()

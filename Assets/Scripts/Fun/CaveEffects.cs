@@ -189,7 +189,9 @@ public class MagmaPool : MonoBehaviour
     {
         GameObject magmaObject = new GameObject("MagmaPool");
         magmaObject.transform.position = new Vector3(groundPoint.x, groundPoint.y, 0f);
-        magmaObject.transform.localScale = new Vector3(width, 1f, 1f);
+        // Taller surface (1.8x) so the magma reads as a real hazard, not a
+        // thin orange line - matches the painted backdrop's impression.
+        magmaObject.transform.localScale = new Vector3(width, 1.8f, 1f);
 
         SpriteRenderer renderer = magmaObject.AddComponent<SpriteRenderer>();
         renderer.sprite = GetMagmaSprite();
@@ -259,7 +261,7 @@ public class MagmaPool : MonoBehaviour
             return;
         }
 
-        RespawnSystem.KillPlayer(other.gameObject);
+        RespawnSystem.KillPlayer(other.gameObject, "マグマ!");
     }
 
     static Sprite GetMagmaSprite()
