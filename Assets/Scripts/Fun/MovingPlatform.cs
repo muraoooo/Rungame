@@ -52,6 +52,12 @@ public class MovingPlatform : MonoBehaviour
 
     static Sprite GetPlatformSprite()
     {
+        Sprite stageSprite = StageTerrainStyler.LoadPlatformSprite(LevelManager.CurrentStage, true);
+        if (stageSprite != null)
+        {
+            return stageSprite;
+        }
+
         if (platformSprite != null)
         {
             return platformSprite;

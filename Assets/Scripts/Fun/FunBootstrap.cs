@@ -107,6 +107,7 @@ public class FunBootstrap : MonoBehaviour
         yield return null;
         StageArtBootstrap.Build(LevelManager.CurrentStage);
         LevelStretcher.Apply(LevelManager.CurrentStage);
+        StageTerrainStyler.Apply(LevelManager.CurrentStage);
         LevelBuilder.Build(LevelManager.CurrentStage);
         CoinSpawner.SpawnLevelCoins(LevelStretcher.CoinEndXForStage(LevelManager.CurrentStage));
     }
