@@ -97,6 +97,8 @@ public static class LevelBuilder
         // Act 2 (30-65): formations.
         SpawnShieldAndTurret(34f);
         SpawnPincerHoppers(54f, 61f);
+        SpawnRewardCoinArc(45.5f, 49.5f, 5, 1.8f);
+        SpawnSpringOnGround(47.5f);
         SpawnCheckpointOnGround(50f);
 
         // Act 3 (65-85): thorn wave, crossed from above by two lifts.
@@ -167,7 +169,7 @@ public static class LevelBuilder
         }
 
         // Torches mark the safe path
-        float[] torchPositions = { 0f, 8f, 16f, 24f, 32f, 40f, 46.5f };
+        float[] torchPositions = { 0f, 8f, 16f, 24f, 32f, 40f, 45.5f, 46.5f, 49.5f };
         foreach (float x in torchPositions)
         {
             Vector2 torchGround;
@@ -202,7 +204,9 @@ public static class LevelBuilder
 
         // Act 2 (30-65): formations.
         SpawnShieldAndTurret(34f);
-        SpawnBatkinWave(44f);
+        SpawnBatkinWave(38f); // quiet zone: moved from x44
+        SpawnRewardCoinArc(45.5f, 49.5f, 5, 1.9f);
+        SpawnSpringOnGround(47.5f);
         SpawnPincerHoppers(57f, 63f);
         SpawnCheckpointOnGround(50f);
 
@@ -211,6 +215,7 @@ public static class LevelBuilder
         SpawnMagmaOnGround(75f, 6f);
         SpawnLiftOnGround(63.5f, 1.7f, 2.5f, 2.8f);
         SpawnSpringOnGround(70.5f);
+        SpawnCheckpointOnGround(70f);
         SpawnLiftOnGround(79f, 1.8f, 2.8f, 2.8f);
         SpawnCheckpointOnGround(84f);
 
@@ -298,7 +303,9 @@ public static class LevelBuilder
 
         // Act 2 (30-65): formations.
         SpawnShieldAndTurret(34f);
-        SpawnBatkinWave(45f);
+        SpawnBatkinWave(38.5f); // quiet zone: moved from x45
+        SpawnRewardCoinArc(45.5f, 49.5f, 5, 1.9f);
+        SpawnSpringOnGround(47.5f);
         SpawnPincerHoppers(57f, 63f);
         SpawnCheckpointOnGround(50f);
 
