@@ -35,10 +35,13 @@ public class Coin : MonoBehaviour
 
     void Update()
     {
-        if (ScoreSystem.MagnetActive)
+        bool weakMagnetUnlocked = ProgressionSystem.CoinPullBonus > 1f;
+        if (ScoreSystem.MagnetActive || weakMagnetUnlocked)
         {
             Transform player = GetPlayer();
-            if (player != null && (player.position - transform.position).sqrMagnitude < 42f)
+            float pullRadius = ScoreSystem.MagnetActive ? 6.5f : 2.2f;
+            pullRadius *= ProgressionSystem.CoinPullBonus;
+            if (player != null && (player.position - transform.position).sqrMagnitude < pullRadius * pullRadius)
             {
                 basePosition = Vector3.MoveTowards(basePosition, player.position, 12f * Time.deltaTime);
             }

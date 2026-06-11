@@ -253,6 +253,7 @@ public class ScoreHud : MonoBehaviour
         if (GameSession.ReachedGoal)
         {
             DrawRankStamp(scale);
+            DrawPowerUnlock(scale);
             int runMedals = 0;
             for (int i = 0; i < 3; i++)
             {
@@ -301,6 +302,24 @@ public class ScoreHud : MonoBehaviour
         hintStyle.fontSize = Mathf.RoundToInt(30f * scale);
         Rect restartRect = new Rect(0f, Screen.height - 58f * scale, Screen.width, 40f * scale);
         DrawOutlined(restartRect, hint, hintStyle, new Color(1f, 1f, 1f, blink));
+    }
+
+    void DrawPowerUnlock(float scale)
+    {
+        if (!ProgressionSystem.HasPendingUnlock)
+        {
+            return;
+        }
+
+        Rect bandRect = new Rect(0f, Screen.height - 250f * scale, Screen.width, 36f * scale);
+        Color original = GUI.color;
+        GUI.color = new Color(1f, 0.66f, 0.12f, 0.78f);
+        GUI.DrawTexture(bandRect, Texture2D.whiteTexture);
+        GUI.color = original;
+
+        bigStyle.fontSize = Mathf.RoundToInt(28f * scale);
+        DrawOutlined(bandRect, "ちからが めざめた! " + ProgressionSystem.PendingUnlockName,
+            bigStyle, new Color(1f, 0.98f, 0.55f));
     }
 
     void DrawRankStamp(float scale)

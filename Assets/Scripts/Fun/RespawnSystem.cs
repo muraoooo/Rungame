@@ -31,7 +31,7 @@ public static class RespawnSystem
         }
 
         Deaths++;
-        invulnerableUntil = Time.time + 2f;
+        invulnerableUntil = Time.time + ProgressionSystem.RespawnInvulnerabilitySeconds;
         ScoreSystem.BreakCombo();
 
         Vector3 deathPosition = player.transform.position;

@@ -21,6 +21,7 @@ public static class RetroSfx
     static AudioClip trickClip;
     static AudioClip feverClip;
     static AudioClip fanfareClip;
+    static AudioClip powerUpClip;
     static AudioClip gameOverClip;
     static AudioClip cutinClip;
     static AudioClip specialBoomClip;
@@ -128,6 +129,17 @@ public static class RetroSfx
         }
 
         Play(fanfareClip);
+    }
+
+    public static void PlayPowerUp()
+    {
+        if (powerUpClip == null)
+        {
+            float[] notes = { 392f, 523f, 659f, 784f, 1047f };
+            powerUpClip = SynthArpeggio("Sfx_PowerUp", notes, 0.1f, 0.42f, 0.38f);
+        }
+
+        Play(powerUpClip);
     }
 
     public static void PlayGameOver()

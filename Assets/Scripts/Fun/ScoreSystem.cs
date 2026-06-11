@@ -6,7 +6,7 @@ public static class ScoreSystem
     const float ComboWindowSeconds = 3.5f;
     const float FeverSeconds = 7f;
 
-    public const int SpecialChargeMax = 5;
+    public static int SpecialChargeMax => ProgressionSystem.SpecialChargeMax;
 
     public static int Score { get; private set; }
     public static int Combo { get; private set; }
@@ -234,6 +234,11 @@ public static class ScoreSystem
             }
         }
         PlayerPrefs.SetInt(medalKey, medalMask);
+
+        if (ProgressionSystem.RegisterStageClear(stage))
+        {
+            RetroSfx.PlayPowerUp();
+        }
 
         PlayerPrefs.Save();
     }
