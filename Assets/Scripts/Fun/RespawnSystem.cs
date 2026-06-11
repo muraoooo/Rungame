@@ -23,7 +23,7 @@ public static class RespawnSystem
         spawnPoint = position;
     }
 
-    public static void KillPlayer(GameObject player)
+    public static void KillPlayer(GameObject player, string cause = null)
     {
         if (player == null || GameSession.HasEnded || !GameSession.HasStarted || IsInvulnerable)
         {
@@ -34,10 +34,17 @@ public static class RespawnSystem
         invulnerableUntil = Time.time + 2f;
         ScoreSystem.BreakCombo();
 
+        Vector3 deathPosition = player.transform.position;
         RetroSfx.PlayHurt();
         JuiceManager.Shake(0.4f);
         JuiceManager.HitStop(0.07f);
-        JuiceManager.Burst(player.transform.position, new Color(1f, 0.35f, 0.3f), 16, 6f);
+        JuiceManager.Burst(deathPosition, new Color(1f, 0.35f, 0.3f), 16, 6f);
+
+        // Tell the player WHY they died, at the place where it happened.
+        if (!string.IsNullOrEmpty(cause))
+        {
+            JuiceManager.Popup(deathPosition + Vector3.up * 1.3f, cause, new Color(1f, 0.42f, 0.36f), 1.25f);
+        }
 
         player.transform.position = spawnPoint + Vector3.up * 0.5f;
 

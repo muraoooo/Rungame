@@ -50,6 +50,9 @@ public class PlayerJump : MonoBehaviour
     {
         rb2d = GetComponent<Rigidbody2D>();
         rb2d.constraints |= RigidbodyConstraints2D.FreezeRotation;
+        // Dash + springs + boost rings reach speeds where discrete collision
+        // tunnels through thin platforms; continuous detection prevents it.
+        rb2d.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         rb2d.gravityScale = gravityScale;
         jumpPower = Mathf.Max(jumpPower, 10f);
         playerCollider = GetComponent<Collider2D>();

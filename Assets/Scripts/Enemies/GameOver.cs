@@ -59,6 +59,7 @@ public class GameOver : MonoBehaviour
         rb2d.gravityScale = gravityScale;
         rb2d.constraints |= RigidbodyConstraints2D.FreezeRotation;
         rb2d.interpolation = RigidbodyInterpolation2D.Interpolate;
+        rb2d.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
@@ -531,7 +532,7 @@ public class GameOver : MonoBehaviour
         }
 
         // No game-over screen: respawn at the last checkpoint.
-        RespawnSystem.KillPlayer(player);
+        RespawnSystem.KillPlayer(player, "ぶつかった!");
         return;
     }
 

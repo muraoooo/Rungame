@@ -53,12 +53,21 @@ public class VariantEnemy : MonoBehaviour
         renderer.sprite = Resources.Load<Sprite>("Enemies/" + kind);
         renderer.sortingOrder = 9;
 
+        // Normalize world size: the generated sprites import at PPU 1024 and
+        // come out ~0.5 units tall - half a slime. Scale to readable sizes.
+        if (renderer.sprite != null && renderer.sprite.bounds.size.y > 0.01f)
+        {
+            float scale = TargetHeight(kind) / renderer.sprite.bounds.size.y;
+            enemyObject.transform.localScale = Vector3.one * scale;
+        }
+
         BoxCollider2D collider = enemyObject.AddComponent<BoxCollider2D>();
         FitCollider(collider, renderer.sprite, kind);
 
         Rigidbody2D body = enemyObject.AddComponent<Rigidbody2D>();
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
         body.interpolation = RigidbodyInterpolation2D.Interpolate;
+        body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         body.gravityScale = kind == VariantEnemyKind.Batkin ? 0f : 3.2f;
         body.bodyType = kind == VariantEnemyKind.Batkin ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
 
@@ -67,6 +76,19 @@ public class VariantEnemy : MonoBehaviour
         enemy.patrolSpeed = patrolSpeed;
         enemy.patrolDistance = patrolDistance;
         return enemy;
+    }
+
+    // Readable world heights, matched against the ~1.3 unit slime.
+    static float TargetHeight(VariantEnemyKind kind)
+    {
+        switch (kind)
+        {
+            case VariantEnemyKind.Batkin: return 0.95f;
+            case VariantEnemyKind.Togemaru: return 1.05f;
+            case VariantEnemyKind.Pettan: return 1.15f;
+            case VariantEnemyKind.Kabuton: return 1f;
+            default: return 1f;
+        }
     }
 
     void Start()
@@ -348,7 +370,7 @@ public class VariantEnemy : MonoBehaviour
             return;
         }
 
-        RespawnSystem.KillPlayer(other);
+        RespawnSystem.KillPlayer(other, "ぶつかった!");
     }
 
     void HandleAttack(SlimeDamagingAttack attack)
