@@ -17,8 +17,10 @@ public static class ScoreSystem
     public static string LastRank { get; private set; } = "";
     public static float ScorePopTime { get; private set; }
 
-    // Par clear times per stage (index = stage number)
-    static readonly float[] parTimes = { 0f, 35f, 45f, 60f, 65f, 75f };
+    // Par clear times per stage (index = stage number).
+    // Stages 2-5 run ~100 units since the course extension; pars are sized
+    // for a normal clean run of the long layouts, not the old 60-unit ones.
+    static readonly float[] parTimes = { 0f, 35f, 70f, 80f, 80f, 95f };
 
     static float comboEndTime;
     static float feverEndTime;
