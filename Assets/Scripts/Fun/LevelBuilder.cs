@@ -138,8 +138,26 @@ public static class LevelBuilder
 
         // Act 2 (30-65): formations.
         SpawnShieldAndTurret(34f);
-        SpawnPincerHoppers(49f, 56f);
-        SpawnCheckpointOnGround(50f);
+        if (IsFirstVisit(3))
+        {
+            SpawnHintOnGround(43f, "ホップのあとが チャンス!");
+        }
+        SpawnCheckpointOnGround(44f);
+
+        GameObject midBossBarrier = CreateBossBarrier(52f);
+        midBossBarrier.name = "MidBossBarrier";
+        midBossBarrier.transform.localScale = new Vector3(0.5f, 6f, 1f);
+        Vector2 barrierGround;
+        if (CoinSpawner.TryFindGround(52f, out barrierGround))
+        {
+            midBossBarrier.transform.position = new Vector3(barrierGround.x, barrierGround.y + 3f, 0f);
+        }
+        Vector2 midBossGround;
+        if (CoinSpawner.TryFindGround(47.5f, out midBossGround))
+        {
+            MidBossSlime.Spawn(new Vector3(midBossGround.x, midBossGround.y + 1.8f, 0f), midBossBarrier);
+        }
+        SpawnPincerHoppers(54f, 57f);
 
         // Act 3 (65-85): 8-stomp combo festival. Starts slightly before 65
         // so the final enemy stays before the enemy-free reward lane.
