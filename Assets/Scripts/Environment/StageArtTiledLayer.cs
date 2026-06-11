@@ -9,8 +9,6 @@ public class StageArtTiledLayer : MonoBehaviour
     public float scale = 1f;
     public float parallaxStrength;
     public float heightScale = 1f;
-    public bool followCameraY = true;
-    public float verticalParallaxStrength = 1f;
 
     readonly List<Transform> tiles = new List<Transform>();
     Camera targetCamera;
@@ -106,8 +104,7 @@ public class StageArtTiledLayer : MonoBehaviour
                 x -= totalWidth;
             }
 
-            float y = followCameraY ? targetCamera.transform.position.y * verticalParallaxStrength + baseY : baseY;
-            tiles[i].position = new Vector3(x, y, 0f);
+            tiles[i].position = new Vector3(x, baseY, 0f);
         }
     }
 }

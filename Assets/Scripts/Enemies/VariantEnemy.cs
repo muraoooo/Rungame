@@ -23,6 +23,7 @@ public class VariantEnemy : MonoBehaviour
     public float patrolDistance;
     public float patrolSpeed;
     public float stompBouncePower = 9f;
+    public float bubbleIntervalSeconds = 2.2f;
     public float flightAmplitude = 0.55f;
     public float flightFrequency = 1.5f;
 
@@ -34,6 +35,7 @@ public class VariantEnemy : MonoBehaviour
     Vector3 batWarningScale;
     Color baseColor = Color.white;
     int moveDirection = -1;
+    float nextBubbleTime;
     float batSwoopReadyTime;
     float batSwoopEndTime;
     float nextBatSwoopTime;
@@ -81,10 +83,10 @@ public class VariantEnemy : MonoBehaviour
     {
         switch (kind)
         {
-            case VariantEnemyKind.Batkin: return 0.95f;
-            case VariantEnemyKind.Togemaru: return 1.05f;
-            case VariantEnemyKind.Pettan: return 1.15f;
-            case VariantEnemyKind.Kabuton: return 1f;
+            case VariantEnemyKind.Batkin: return 1.55f;
+            case VariantEnemyKind.Togemaru: return 1.55f;
+            case VariantEnemyKind.Pettan: return 1.85f;
+            case VariantEnemyKind.Kabuton: return 1.65f;
             default: return 1f;
         }
     }
@@ -96,6 +98,7 @@ public class VariantEnemy : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         startPosition = transform.position;
         baseColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
+        nextBubbleTime = Time.time + Random.Range(0.5f, 1.2f);
         nextBatSwoopTime = Time.time + Random.Range(0.8f, 1.4f);
     }
 
@@ -122,6 +125,25 @@ public class VariantEnemy : MonoBehaviour
         }
 
         PatrolGround();
+    }
+
+    void Update()
+    {
+        if (defeated || GameSession.HasEnded || kind != VariantEnemyKind.Pettan)
+        {
+            return;
+        }
+
+        if (Time.time >= nextBubbleTime)
+        {
+            nextBubbleTime = Time.time + bubbleIntervalSeconds;
+            Vector2 direction = FindPlayerDirection();
+            PettanBubble bubble = PettanBubble.Spawn(transform.position + new Vector3(0.15f * direction.x, 0.35f, 0f), new Vector2(direction.x * 3.4f, 4.7f));
+            if (bubble != null)
+            {
+                RetroSfx.PlayShoot();
+            }
+        }
     }
 
     void UpdateBatFlight()
@@ -447,6 +469,18 @@ public class VariantEnemy : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    Vector2 FindPlayerDirection()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null)
+        {
+            return Vector2.left;
+        }
+
+        float direction = Mathf.Sign(player.transform.position.x - transform.position.x);
+        return new Vector2(direction == 0f ? -1f : direction, 0f);
     }
 
     static void FitCollider(BoxCollider2D collider, Sprite sprite, VariantEnemyKind kind)

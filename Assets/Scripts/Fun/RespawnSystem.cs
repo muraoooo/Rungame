@@ -5,9 +5,7 @@ using UnityEngine;
 // penalty. Beginners keep playing, speedrunners aim for deathless runs.
 public static class RespawnSystem
 {
-    public const int MaxHearts = 3;
     public static int Deaths { get; private set; }
-    public static int CurrentHearts { get; private set; } = MaxHearts;
     public static bool IsInvulnerable => Time.time < invulnerableUntil;
 
     static Vector3 spawnPoint;
@@ -17,7 +15,6 @@ public static class RespawnSystem
     {
         spawnPoint = playerStart;
         Deaths = 0;
-        CurrentHearts = MaxHearts;
         invulnerableUntil = 0f;
     }
 
@@ -33,8 +30,8 @@ public static class RespawnSystem
             return;
         }
 
-        CurrentHearts = Mathf.Max(0, CurrentHearts - 1);
-        invulnerableUntil = Time.time + 2f;
+        Deaths++;
+        invulnerableUntil = Time.time + ProgressionSystem.RespawnInvulnerabilitySeconds;
         ScoreSystem.BreakCombo();
 
         Vector3 deathPosition = player.transform.position;
@@ -49,22 +46,9 @@ public static class RespawnSystem
             JuiceManager.Popup(deathPosition + Vector3.up * 1.3f, cause, new Color(1f, 0.42f, 0.36f), 1.25f);
         }
 
-        Rigidbody2D body = player.GetComponent<Rigidbody2D>();
-        if (CurrentHearts > 0)
-        {
-            if (body != null)
-            {
-                body.linearVelocity = new Vector2(body.linearVelocity.x * -0.25f, 7f);
-            }
-
-            JuiceManager.Popup(player.transform.position + Vector3.up * 1.6f, "ハート -" + 1, new Color(1f, 0.55f, 0.55f), 1f);
-            return;
-        }
-
-        Deaths++;
-        CurrentHearts = MaxHearts;
         player.transform.position = spawnPoint + Vector3.up * 0.5f;
 
+        Rigidbody2D body = player.GetComponent<Rigidbody2D>();
         if (body != null)
         {
             body.linearVelocity = Vector2.zero;

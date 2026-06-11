@@ -37,10 +37,23 @@ public static class LevelBuilder
     // 1-1: the original gentle layout, plus a spring to teach bouncing.
     static void BuildStage1()
     {
+        // A tight coin row right at the start so the W special is charged
+        // within the first seconds - the player tastes the big move early.
+        for (int i = 0; i < 5; i++)
+        {
+            Vector2 starterGround;
+            float x = -6.4f + i * 0.8f;
+            if (CoinSpawner.TryFindGround(x, out starterGround))
+            {
+                Coin.Spawn(new Vector3(starterGround.x, starterGround.y + 0.95f, 0f));
+            }
+        }
+
         SpawnSpringOnGround(18f);
         SpawnCheckpointOnGround(24f);
 
         SpawnMedalOnGround(13f, 2.3f, 0);
+        SpawnMedalOnGround(27f, 2.3f, 1);
         SpawnMedalOnGround(41f, 2.3f, 2);
 
         // First-timers get contextual coaching; veterans (anyone with a
@@ -52,7 +65,7 @@ public static class LevelBuilder
             SpawnHintOnGround(7f, "れんぞくで ふむと コンボ!");
             SpawnHintOnGround(14f, "SHIFT で ダッシュ!");
             SpawnHintOnGround(20f, "バネで おおジャンプ! くうちゅうで Q!");
-            SpawnHintOnGround(8f, "コイン5まいで W ひっさつ!");
+            SpawnHintOnGround(44f, "コイン5まいで W ひっさつ!");
         }
     }
 
@@ -79,10 +92,13 @@ public static class LevelBuilder
         SpawnCheckpointOnGround(25f);
 
         SpawnMedalOnGround(8f, 2.3f, 0);
+        SpawnMedalOnGround(21f, 1.5f, 1);
 
         // Act 2 (30-65): formations.
         SpawnShieldAndTurret(34f);
         SpawnPincerHoppers(54f, 61f);
+        SpawnRewardCoinArc(45.5f, 49.5f, 5, 1.8f);
+        SpawnSpringOnGround(47.5f);
         SpawnCheckpointOnGround(50f);
 
         // Act 3 (65-85): thorn wave, crossed from above by two lifts.
@@ -91,6 +107,7 @@ public static class LevelBuilder
         SpawnLiftOnGround(73.4f, 2.3f, 2.4f, 2.6f);
         SpawnCheckpointOnGround(75f);
 
+        SpawnRewardCoinArc(86f, 94f, 7, 2.2f);
         SpawnMedalOnGround(91f, 2.6f, 2);
     }
 
@@ -116,21 +133,41 @@ public static class LevelBuilder
         SpawnMagnetOnGround(40f, 1.3f);
         SpawnCheckpointOnGround(25f);
 
+        SpawnMedalOnGround(12f, 4.6f, 0);
         SpawnMedalOnGround(20f, 4.4f, 1);
 
         // Act 2 (30-65): formations.
         SpawnShieldAndTurret(34f);
-        SpawnPincerHoppers(49f, 56f);
-        SpawnCheckpointOnGround(50f);
+        if (IsFirstVisit(3))
+        {
+            SpawnHintOnGround(43f, "ホップのあとが チャンス!");
+        }
+        SpawnCheckpointOnGround(44f);
+
+        GameObject midBossBarrier = CreateBossBarrier(52f);
+        midBossBarrier.name = "MidBossBarrier";
+        midBossBarrier.transform.localScale = new Vector3(0.5f, 6f, 1f);
+        Vector2 barrierGround;
+        if (CoinSpawner.TryFindGround(52f, out barrierGround))
+        {
+            midBossBarrier.transform.position = new Vector3(barrierGround.x, barrierGround.y + 3f, 0f);
+        }
+        Vector2 midBossGround;
+        if (CoinSpawner.TryFindGround(47.5f, out midBossGround))
+        {
+            MidBossSlime.Spawn(new Vector3(midBossGround.x, midBossGround.y + 1.8f, 0f), midBossBarrier);
+        }
+        SpawnPincerHoppers(54f, 57f);
 
         // Act 3 (65-85): 8-stomp combo festival. Starts slightly before 65
         // so the final enemy stays before the enemy-free reward lane.
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 8; i++)
         {
-            SpawnExtraSlime(60f + i * 5.2f, 2.2f, 1.1f, false);
+            SpawnExtraSlime(58.6f + i * 3.4f, 2.4f, 1.2f, false);
         }
         SpawnCheckpointOnGround(84f);
 
+        SpawnRewardCoinArc(86f, 94f, 8, 2.5f);
         SpawnMedalOnGround(91f, 2.7f, 2);
     }
 
@@ -150,7 +187,7 @@ public static class LevelBuilder
         }
 
         // Torches mark the safe path
-        float[] torchPositions = { 0f, 8f, 16f, 24f, 32f, 40f, 46.5f };
+        float[] torchPositions = { 0f, 8f, 16f, 24f, 32f, 40f, 45.5f, 46.5f, 49.5f };
         foreach (float x in torchPositions)
         {
             Vector2 torchGround;
@@ -180,11 +217,14 @@ public static class LevelBuilder
         }
 
         // Medals glow over the magma - beauty guarding treasure.
+        SpawnMedalOnGround(20f, 1.8f, 0);
         SpawnMedalOnGround(29f, 1.8f, 1);
 
         // Act 2 (30-65): formations.
         SpawnShieldAndTurret(34f);
-        SpawnBatkinWave(44f);
+        SpawnBatkinWave(38f); // quiet zone: moved from x44
+        SpawnRewardCoinArc(45.5f, 49.5f, 5, 1.9f);
+        SpawnSpringOnGround(47.5f);
         SpawnPincerHoppers(57f, 63f);
         SpawnCheckpointOnGround(50f);
 
@@ -193,9 +233,11 @@ public static class LevelBuilder
         SpawnMagmaOnGround(75f, 6f);
         SpawnLiftOnGround(63.5f, 1.7f, 2.5f, 2.8f);
         SpawnSpringOnGround(70.5f);
+        SpawnCheckpointOnGround(70f);
         SpawnLiftOnGround(79f, 1.8f, 2.8f, 2.8f);
         SpawnCheckpointOnGround(84f);
 
+        SpawnRewardCoinArc(86f, 94f, 7, 2.7f);
         SpawnMedalOnGround(91f, 3.1f, 2);
     }
 
@@ -252,8 +294,7 @@ public static class LevelBuilder
     // a long death zone, and the King Slime boss guarding the goal.
     static void BuildBossStage()
     {
-        float goalX = LevelStretcher.TargetGoalX(LevelManager.CurrentStage);
-        PlaceGoalOnGround(goalX);
+        PlaceGoalOnGround(96f);
         CreateDarkOverlay();
         TuneExistingSlimes(1.8f, 5f, 0.15f);
 
@@ -264,6 +305,7 @@ public static class LevelBuilder
         SpawnExtraSlime(10f, 2f, 1.6f, true);
 
         SpawnExtraSlime(16f, 3.8f, 3f, false);
+        SpawnExtraSlime(19f, 2.2f, 1.8f, true);
 
         // Death zone: a continuous spike field crossed by lifts
         // (or by spring + mid-air dash for the brave)
@@ -279,7 +321,9 @@ public static class LevelBuilder
 
         // Act 2 (30-65): formations.
         SpawnShieldAndTurret(34f);
-        SpawnBatkin(45f, 1.6f, 1.1f, 1.6f);
+        SpawnBatkinWave(38.5f); // quiet zone: moved from x45
+        SpawnRewardCoinArc(45.5f, 49.5f, 5, 1.9f);
+        SpawnSpringOnGround(47.5f);
         SpawnPincerHoppers(57f, 63f);
         SpawnCheckpointOnGround(50f);
 
@@ -291,20 +335,25 @@ public static class LevelBuilder
         // Act 3 (65-85): two castle gates, then a final barrier trial.
         SpawnVariantOnGround(VariantEnemyKind.Togemaru, 66f, 0f, 0f, 0.7f);
         SpawnSpikeOnGround(68f, 1.8f);
+        SpawnVariantOnGround(VariantEnemyKind.Togemaru, 72f, 0f, 0f, 0.7f);
+        SpawnSpikeOnGround(74f, 1.8f);
         SpawnVariantOnGround(VariantEnemyKind.Kabuton, 80f, 0f, 0f, 0.72f);
         SpawnLiftOnGround(82f, 1.7f, 2.4f, 2.6f);
         SpawnCheckpointOnGround(70f);
         SpawnCheckpointOnGround(84f);
 
         // Reward lane before the boss arena: no normal enemies here.
-        SpawnMedalOnGround(goalX - 16f, 3.2f, 2);
+        SpawnRewardCoinArc(86f, 91f, 6, 2.2f);
+        SpawnMedalOnGround(8.5f, 2.3f, 0);
+        SpawnMedalOnGround(28f, 4.8f, 1);
+        SpawnMedalOnGround(88f, 3.2f, 2);
 
         // Boss arena: barrier seals the goal until the King falls.
         // A spring lets the player bounce up for readable head stomps.
-        SpawnSpringOnGround(goalX - 9.5f);
-        GameObject barrier = CreateBossBarrier(goalX - 2.2f);
+        SpawnSpringOnGround(90f);
+        GameObject barrier = CreateBossBarrier(95f);
         Vector2 arenaGround;
-        if (CoinSpawner.TryFindGround(goalX - 6f, out arenaGround))
+        if (CoinSpawner.TryFindGround(92f, out arenaGround))
         {
             BossSlime.Spawn(new Vector3(arenaGround.x, arenaGround.y + 2.5f, 0f), barrier);
         }
@@ -409,12 +458,14 @@ public static class LevelBuilder
     static void SpawnBatkinWave(float startX)
     {
         SpawnBatkin(startX, 1.35f, 1.1f, 1.6f);
+        SpawnBatkin(startX + 3f, 2.05f, 1.15f, 1.8f);
         SpawnBatkin(startX + 6f, 1.65f, 1.2f, 1.8f);
     }
 
     static void SpawnPincerHoppers(float leftX, float rightX)
     {
-        SpawnExtraSlime((leftX + rightX) * 0.5f, 2.5f, 1.8f, true);
+        SpawnExtraSlime(leftX, 2.6f, 2.1f, true);
+        SpawnExtraSlime(rightX, 2.6f, 2.1f, true);
     }
 
     static void SpawnSpikeWave(float startX, int count, float spacing, float width)

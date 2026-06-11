@@ -15,10 +15,8 @@ public class PlayerJump : MonoBehaviour
     public float jumpScale = 1.3f;
     public float acrobatScale = 1.2f;
     public bool fitColliderToBikeBody = true;
-    public Vector2 fittedColliderSize = new Vector2(1.08f, 2.18f);
-    public Vector2 fittedColliderOffset = new Vector2(0f, -0.28f);
-    public Vector2 airborneColliderWorldSize = new Vector2(0.62f, 1.32f);
-    public Vector2 airborneColliderWorldOffset = new Vector2(0f, 0.08f);
+    public Vector2 fittedColliderSize = new Vector2(1.16f, 1.96f);
+    public Vector2 fittedColliderOffset = new Vector2(0f, -0.22f);
     public string[] groundObjectNamePrefixes = { "Ground", "Platform" };
 
     Rigidbody2D rb2d;
@@ -47,7 +45,6 @@ public class PlayerJump : MonoBehaviour
     const float AcrobatJumpGravityGraceSeconds = 0.38f;
     const float CoyoteSeconds = 0.1f;
     const float JumpBufferSeconds = 0.12f;
-    const float GroundedTopTolerance = 0.32f;
 
     void Start()
     {
@@ -59,20 +56,10 @@ public class PlayerJump : MonoBehaviour
         rb2d.gravityScale = gravityScale;
         jumpPower = Mathf.Max(jumpPower, 10f);
         playerCollider = GetComponent<Collider2D>();
+        FitColliderToBikeBodyIfNeeded();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-        baseScale = transform.localScale;
-
-        // The bike sprite already has the right size in the scene. Scaling the
-        // whole player up made the wheels look buried and confused grounding.
-        idleScale = 1f;
-        jumpScale = 1f;
-        acrobatScale = 1f;
-        fittedColliderSize = new Vector2(1.08f, 2.18f);
-        fittedColliderOffset = new Vector2(0f, -0.28f);
-        airborneColliderWorldSize = new Vector2(0.62f, 1.32f);
-        airborneColliderWorldOffset = new Vector2(0f, 0.08f);
-        FitColliderToBikeBodyIfNeeded();
+        baseScale = Vector3.one;
 
         if (spriteRenderer != null && idleSprite == null)
         {
@@ -116,6 +103,7 @@ public class PlayerJump : MonoBehaviour
         if (isGrounded && !wasGroundedLastFrame && lastVerticalVelocity < -3f)
         {
             JuiceManager.Dust(new Vector3(playerCollider.bounds.center.x, playerCollider.bounds.min.y, 0f), 7);
+            JuiceManager.Shake(0.08f);
         }
 
         wasGroundedLastFrame = isGrounded;
@@ -290,7 +278,7 @@ public class PlayerJump : MonoBehaviour
             isAcrobatVisual = false;
         }
 
-        float visualScale = isJumpVisual || isAcrobatVisual ? jumpScale : idleScale;
+        float visualScale = isJumpVisual ? jumpScale : idleScale;
         transform.localScale = new Vector3(baseScale.x * visualScale, baseScale.y * visualScale, baseScale.z);
         UpdateColliderFit(isGrounded, visualScale);
 
@@ -349,17 +337,19 @@ public class PlayerJump : MonoBehaviour
             return;
         }
 
+        float compensate = idleScale / Mathf.Max(0.01f, visualScale);
+        Vector2 size = fittedColliderSize * compensate;
+        Vector2 offset = fittedColliderOffset * compensate;
+
         if (!isGrounded)
         {
-            float safeScale = Mathf.Max(0.01f, visualScale);
-            boxCollider.size = airborneColliderWorldSize / safeScale;
-            boxCollider.offset = airborneColliderWorldOffset / safeScale;
-            return;
+            size.x *= 0.74f;
+            size.y = Mathf.Max(0.4f, size.y - 0.24f);
+            offset.y += 0.12f;
         }
 
-        float compensate = idleScale / Mathf.Max(0.01f, visualScale);
-        boxCollider.size = fittedColliderSize * compensate;
-        boxCollider.offset = fittedColliderOffset * compensate;
+        boxCollider.size = size;
+        boxCollider.offset = offset;
     }
 
     bool IsGrounded()
@@ -377,23 +367,13 @@ public class PlayerJump : MonoBehaviour
                 continue;
             }
 
-            if (IsAllowedGroundCollider(hit) && IsUsableGroundTop(hit.bounds.max.y, bounds))
+            if (IsAllowedGroundCollider(hit) && hit.bounds.max.y <= bounds.min.y + 0.08f)
             {
                 return true;
             }
         }
 
         return false;
-    }
-
-    bool IsUsableGroundTop(float groundTop, Bounds playerBounds)
-    {
-        if (groundTop <= playerBounds.min.y + GroundedTopTolerance)
-        {
-            return true;
-        }
-
-        return playerBounds.min.y <= groundTop && groundTop <= playerBounds.center.y - 0.08f;
     }
 
     bool IsAllowedGroundCollider(Collider2D hit)

@@ -6,7 +6,7 @@ public static class ScoreSystem
     const float ComboWindowSeconds = 3.5f;
     const float FeverSeconds = 7f;
 
-    public const int SpecialChargeMax = 5;
+    public static int SpecialChargeMax => ProgressionSystem.SpecialChargeMax;
 
     public static int Score { get; private set; }
     public static int Combo { get; private set; }
@@ -51,10 +51,16 @@ public static class ScoreSystem
     public static void AddCoin(Vector3 position)
     {
         CoinsCollected++;
+        bool wasReady = SpecialReady;
         SpecialCharge = Mathf.Min(SpecialChargeMax, SpecialCharge + 1);
         int points = 100 * (IsFever ? 2 : 1);
         AddScore(points);
         JuiceManager.Popup(position, "+" + points, new Color(1f, 0.84f, 0.25f), 0.95f);
+
+        if (SpecialReady && !wasReady)
+        {
+            JuiceManager.Popup(position + Vector3.up * 0.9f, "W で ひっさつ READY!", new Color(0.6f, 1f, 0.45f), 1.1f);
+        }
     }
 
     public static void RegisterStomp(Vector3 position)
@@ -228,6 +234,11 @@ public static class ScoreSystem
             }
         }
         PlayerPrefs.SetInt(medalKey, medalMask);
+
+        if (ProgressionSystem.RegisterStageClear(stage))
+        {
+            RetroSfx.PlayPowerUp();
+        }
 
         PlayerPrefs.Save();
     }

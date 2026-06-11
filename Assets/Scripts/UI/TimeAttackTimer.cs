@@ -35,8 +35,8 @@ public class TimeAttackTimer : MonoBehaviour
 
         float scale = Mathf.Clamp(Screen.height / 1080f, 0.74f, 1.2f);
         Vector2 position = screenPosition * scale;
-        float panelWidth = 214f * scale;
-        float panelHeight = 58f * scale;
+        float panelWidth = 304f * scale;
+        float panelHeight = 92f * scale;
         Color accentColor = GameSession.ReachedGoal ? finishGold : skyBlue;
 
         Rect shadowRect = new Rect(position.x + 5f * scale, position.y + 6f * scale, panelWidth, panelHeight);
@@ -44,8 +44,8 @@ public class TimeAttackTimer : MonoBehaviour
         Rect borderRect = new Rect(position.x - 3f * scale, position.y - 3f * scale, panelWidth + 6f * scale, panelHeight + 6f * scale);
         float labelBounce = Mathf.Sin(Time.realtimeSinceStartup * 4.2f) * 2f * scale;
         float labelSquish = 1f + Mathf.Sin(Time.realtimeSinceStartup * 4.2f) * 0.035f;
-        Rect ribbonRect = new Rect(position.x + 52f * scale, position.y - 4f * scale + labelBounce, 76f * scale, 18f * scale);
-        Rect clockRect = new Rect(position.x + 10f * scale, position.y + 17f * scale, 30f * scale, 30f * scale);
+        Rect ribbonRect = new Rect(position.x + 72f * scale, position.y - 5f * scale + labelBounce, 108f * scale, 24f * scale);
+        Rect clockRect = new Rect(position.x + 15f * scale, position.y + 23f * scale, 48f * scale, 48f * scale);
 
         DrawTinted(shadowRect, panelTexture, new Color(0f, 0f, 0f, 0.22f));
         DrawTinted(borderRect, panelBorderTexture, accentColor);
@@ -58,14 +58,14 @@ public class TimeAttackTimer : MonoBehaviour
         string mini = GameSession.ReachedGoal ? "Best ride!" : "YUNKEY RUN";
         string timeText = FormatTime(GameSession.ElapsedTime);
 
-        labelStyle.fontSize = Mathf.RoundToInt(fontSize * 0.32f * scale);
-        timeStyle.fontSize = Mathf.RoundToInt(fontSize * 0.72f * scale);
-        miniStyle.fontSize = Mathf.RoundToInt(fontSize * 0.24f * scale);
+        labelStyle.fontSize = Mathf.RoundToInt(fontSize * 0.43f * scale);
+        timeStyle.fontSize = Mathf.RoundToInt(fontSize * 1.28f * scale);
+        miniStyle.fontSize = Mathf.RoundToInt(fontSize * 0.3f * scale);
         timeStyle.normal.textColor = GameSession.ReachedGoal ? new Color(0.55f, 0.32f, 0.04f, 1f) : inkColor;
 
         DrawCuteLabel(new Rect(ribbonRect.x, ribbonRect.y + 2f * scale, ribbonRect.width, ribbonRect.height), label, scale);
-        DrawCuteTime(new Rect(position.x + 48f * scale, position.y + 18f * scale, 148f * scale, 28f * scale), timeText, scale);
-        GUI.Label(new Rect(position.x + 52f * scale, position.y + 42f * scale, 118f * scale, 14f * scale), mini, miniStyle);
+        DrawCuteTime(new Rect(position.x + 76f * scale, position.y + 24f * scale, 212f * scale, 48f * scale), timeText, scale);
+        GUI.Label(new Rect(position.x + 82f * scale, position.y + 67f * scale, 154f * scale, 18f * scale), mini, miniStyle);
     }
 
     void EnsureResources()
@@ -104,9 +104,10 @@ public class TimeAttackTimer : MonoBehaviour
 
     void DrawDecorations(Vector2 position, float scale, Color accentColor)
     {
-        DrawTinted(new Rect(position.x + 184f * scale, position.y + 8f * scale, 14f * scale, 14f * scale), starTexture, finishGold);
-        DrawTinted(new Rect(position.x + 194f * scale, position.y + 38f * scale, 12f * scale, 12f * scale), starTexture, berryPink);
-        DrawTinted(new Rect(position.x + 156f * scale, position.y + 45f * scale, 16f * scale, 10f * scale), leafTexture, mintGreen);
+        DrawTinted(new Rect(position.x + 260f * scale, position.y + 10f * scale, 20f * scale, 20f * scale), starTexture, finishGold);
+        DrawTinted(new Rect(position.x + 278f * scale, position.y + 58f * scale, 16f * scale, 16f * scale), starTexture, berryPink);
+        DrawTinted(new Rect(position.x + 216f * scale, position.y + 72f * scale, 22f * scale, 14f * scale), leafTexture, mintGreen);
+        DrawTinted(new Rect(position.x + 10f * scale, position.y + 72f * scale, 18f * scale, 12f * scale), leafTexture, accentColor);
     }
 
     void DrawClock(Rect rect, float scale, Color accentColor)
@@ -115,9 +116,10 @@ public class TimeAttackTimer : MonoBehaviour
         DrawTinted(new Rect(rect.x + 5f * scale, rect.y + 5f * scale, rect.width - 10f * scale, rect.height - 10f * scale), clockFaceTexture, Color.white);
 
         Vector2 center = rect.center;
-        DrawLine(center, center + new Vector2(0f, -7f * scale), 2f * scale, inkColor);
-        DrawLine(center, center + new Vector2(6f * scale, 4f * scale), 2f * scale, inkColor);
-        DrawTinted(new Rect(center.x - 2f * scale, center.y - 2f * scale, 4f * scale, 4f * scale), clockFaceTexture, berryPink);
+        DrawLine(center, center + new Vector2(0f, -12f * scale), 3f * scale, inkColor);
+        DrawLine(center, center + new Vector2(10f * scale, 7f * scale), 3f * scale, inkColor);
+        DrawTinted(new Rect(center.x - 3f * scale, center.y - 3f * scale, 6f * scale, 6f * scale), clockFaceTexture, berryPink);
+        DrawTinted(new Rect(rect.x + 15f * scale, rect.y - 3f * scale, 8f * scale, 10f * scale), leafTexture, mintGreen);
     }
 
     void DrawPulsingRibbon(Rect rect, Color color, float scalePulse)

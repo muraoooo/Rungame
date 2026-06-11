@@ -4,41 +4,25 @@ public static class CoinSpawner
 {
     public static void SpawnLevelCoins(float endX = 50f)
     {
-        const float startX = -6.2f;
-        float earlyEndX = Mathf.Min(endX, Mathf.Max(18f, endX * 0.48f));
-        float middleStartX = earlyEndX + 5f;
-        float middleEndX = Mathf.Min(endX, Mathf.Max(middleStartX, endX * 0.72f));
+        float startX = -4f;
+        float step = 2.4f;
+        int column = 0;
 
-        int earlyIndex = 0;
-        for (float x = startX; x <= earlyEndX; x += 1.35f)
+        for (float x = startX; x <= endX; x += step, column++)
         {
-            SpawnCoinAtGround(x, 0.95f);
-
-            // Occasional second coins make the opening read as a reward lane
-            // without forcing precise jumps for the W charge.
-            if (earlyIndex % 5 == 2)
+            Vector2 groundPoint;
+            if (!TryFindGround(x, out groundPoint))
             {
-                SpawnCoinAtGround(x + 0.25f, 1.65f);
+                continue;
             }
 
-            earlyIndex++;
-        }
+            Coin.Spawn(new Vector3(groundPoint.x, groundPoint.y + 0.95f, 0f));
 
-        for (float x = middleStartX; x <= middleEndX; x += 8.5f)
-        {
-            SpawnCoinAtGround(x, 1.05f);
+            if (column % 4 == 1)
+            {
+                Coin.Spawn(new Vector3(groundPoint.x, groundPoint.y + 2.6f, 0f));
+            }
         }
-    }
-
-    static void SpawnCoinAtGround(float x, float yOffset)
-    {
-        Vector2 groundPoint;
-        if (!TryFindGround(x, out groundPoint))
-        {
-            return;
-        }
-
-        Coin.Spawn(new Vector3(groundPoint.x, groundPoint.y + yOffset, 0f));
     }
 
     public static bool TryFindGround(float x, out Vector2 groundPoint)

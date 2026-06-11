@@ -6,6 +6,7 @@ public class ScoreHud : MonoBehaviour
     GUIStyle infoStyle;
     GUIStyle bigStyle;
     GUIStyle hintStyle;
+    Texture2D[] stageIntroTextures;
 
     void EnsureStyles()
     {
@@ -43,26 +44,12 @@ public class ScoreHud : MonoBehaviour
         float scale = Mathf.Clamp(Screen.height / 1080f, 0.74f, 1.2f);
 
         DrawScore(scale);
-        DrawHearts(scale);
         DrawStageLabel(scale);
         DrawStageIntro(scale);
         DrawActionStatus(scale);
         DrawRunStatus(scale);
         DrawStartHint(scale);
         DrawEndPanel(scale);
-    }
-
-    void DrawHearts(float scale)
-    {
-        infoStyle.fontSize = Mathf.RoundToInt(28f * scale);
-        infoStyle.alignment = TextAnchor.UpperLeft;
-
-        string hearts = new string('♥', RespawnSystem.CurrentHearts)
-            + new string('♡', RespawnSystem.MaxHearts - RespawnSystem.CurrentHearts);
-        Rect rect = new Rect(24f * scale, 84f * scale, 210f * scale, 34f * scale);
-        DrawOutlined(rect, hearts, infoStyle, new Color(1f, 0.25f, 0.35f));
-
-        infoStyle.alignment = TextAnchor.UpperRight;
     }
 
     void DrawStageLabel(float scale)
@@ -111,6 +98,25 @@ public class ScoreHud : MonoBehaviour
 
         float alpha = elapsed < 1.3f ? 1f : 1f - (elapsed - 1.3f) / 0.5f;
         float popScale = 1f + Mathf.Max(0f, 0.4f - elapsed * 1.6f);
+
+        Texture2D stageIntro = StageIntroTexture();
+        if (stageIntro != null)
+        {
+            float width = Mathf.Min(Screen.width * 0.78f, 900f * scale * popScale);
+            float height = width * stageIntro.height / stageIntro.width;
+            Rect imageRect = new Rect(
+                (Screen.width - width) * 0.5f,
+                Screen.height * 0.24f,
+                width,
+                height);
+
+            Color original = GUI.color;
+            GUI.color = new Color(1f, 1f, 1f, alpha);
+            GUI.DrawTexture(imageRect, stageIntro, ScaleMode.ScaleToFit, true);
+            GUI.color = original;
+            return;
+        }
+
         bigStyle.fontSize = Mathf.RoundToInt(72f * scale * popScale);
         Rect rect = new Rect(0f, Screen.height * 0.3f, Screen.width, 100f * scale);
         DrawOutlined(rect, "STAGE " + LevelManager.StageLabel, bigStyle, new Color(1f, 0.95f, 0.5f, alpha));
@@ -118,6 +124,22 @@ public class ScoreHud : MonoBehaviour
         bigStyle.fontSize = Mathf.RoundToInt(34f * scale);
         Rect subRect = new Rect(0f, Screen.height * 0.3f + 90f * scale, Screen.width, 50f * scale);
         DrawOutlined(subRect, StageCatchphrase(), bigStyle, new Color(1f, 1f, 1f, alpha));
+    }
+
+    Texture2D StageIntroTexture()
+    {
+        if (stageIntroTextures == null)
+        {
+            stageIntroTextures = new Texture2D[LevelManager.MaxStage + 1];
+        }
+
+        int stage = Mathf.Clamp(LevelManager.CurrentStage, 1, LevelManager.MaxStage);
+        if (stageIntroTextures[stage] == null)
+        {
+            stageIntroTextures[stage] = Resources.Load<Texture2D>("UI/StageIntro/Stage" + stage);
+        }
+
+        return stageIntroTextures[stage];
     }
 
     string StageCatchphrase()
@@ -151,7 +173,8 @@ public class ScoreHud : MonoBehaviour
         }
         else
         {
-            string gauge = ScoreSystem.SpecialCharge + "/" + ScoreSystem.SpecialChargeMax;
+            string gauge = new string('★', ScoreSystem.SpecialCharge)
+                + new string('☆', ScoreSystem.SpecialChargeMax - ScoreSystem.SpecialCharge);
             DrawOutlined(specialRect, "W: " + gauge, infoStyle, new Color(0.75f, 0.8f, 0.85f));
         }
     }
@@ -266,6 +289,7 @@ public class ScoreHud : MonoBehaviour
         if (GameSession.ReachedGoal)
         {
             DrawRankStamp(scale);
+            DrawPowerUnlock(scale);
             int runMedals = 0;
             for (int i = 0; i < 3; i++)
             {
@@ -314,6 +338,24 @@ public class ScoreHud : MonoBehaviour
         hintStyle.fontSize = Mathf.RoundToInt(30f * scale);
         Rect restartRect = new Rect(0f, Screen.height - 58f * scale, Screen.width, 40f * scale);
         DrawOutlined(restartRect, hint, hintStyle, new Color(1f, 1f, 1f, blink));
+    }
+
+    void DrawPowerUnlock(float scale)
+    {
+        if (!ProgressionSystem.HasPendingUnlock)
+        {
+            return;
+        }
+
+        Rect bandRect = new Rect(0f, Screen.height - 250f * scale, Screen.width, 36f * scale);
+        Color original = GUI.color;
+        GUI.color = new Color(1f, 0.66f, 0.12f, 0.78f);
+        GUI.DrawTexture(bandRect, Texture2D.whiteTexture);
+        GUI.color = original;
+
+        bigStyle.fontSize = Mathf.RoundToInt(28f * scale);
+        DrawOutlined(bandRect, "ちからが めざめた! " + ProgressionSystem.PendingUnlockName,
+            bigStyle, new Color(1f, 0.98f, 0.55f));
     }
 
     void DrawRankStamp(float scale)

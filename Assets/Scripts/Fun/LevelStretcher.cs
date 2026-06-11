@@ -33,7 +33,7 @@ public static class LevelStretcher
             return 36f;
         }
 
-        return Mathf.Max(18f, TargetGoalX(stage) - 18f);
+        return TargetGoalX(stage) - 2f;
     }
 
     static void ExtendGroundIfNeeded(int stage)

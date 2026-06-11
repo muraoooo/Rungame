@@ -80,7 +80,7 @@ public class PlayerMove : MonoBehaviour
 
     void TryAssistOntoPlatform()
     {
-        if (playerCollider == null || Mathf.Abs(inputX) < 0.01f || rb2d.linearVelocity.y > 0.05f)
+        if (playerCollider == null || Mathf.Abs(inputX) < 0.01f)
         {
             return;
         }
