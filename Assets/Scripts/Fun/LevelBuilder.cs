@@ -159,6 +159,10 @@ public static class LevelBuilder
         }
         SpawnPincerHoppers(54f, 57f);
 
+        // Checkpoint cadence: without this, dying in the combo row sent the
+        // player back 40 units to the mid-boss gate (rule: max 25 apart).
+        SpawnCheckpointOnGround(58f);
+
         // Act 3 (65-85): 8-stomp combo festival. Starts slightly before 65
         // so the final enemy stays before the enemy-free reward lane.
         for (int i = 0; i < 8; i++)

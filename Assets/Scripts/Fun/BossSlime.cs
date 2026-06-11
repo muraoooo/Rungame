@@ -13,11 +13,15 @@ public class BossSlime : MonoBehaviour
     public int maxHealth = 3;
     public int Health { get; private set; }
 
-    const float ArenaMinX = 40f;
-    const float ArenaMaxX = 50.2f;
-    const float IntroTriggerX = 36f;
     const float InvulnerableSeconds = 1.6f;
     const float SpitTelegraphSeconds = 0.4f;
+
+    // Arena bounds follow wherever the boss is spawned. The stage layout
+    // moved the arena to ~x92; the old fixed 40-50.2 constants teleported
+    // the boss back to mid-stage the moment the fight started.
+    float arenaMinX = 40f;
+    float arenaMaxX = 50.2f;
+    float introTriggerX = 36f;
 
     GameObject barrier;
     Rigidbody2D body;
@@ -87,6 +91,9 @@ public class BossSlime : MonoBehaviour
 
         BossSlime boss = bossObject.AddComponent<BossSlime>();
         boss.barrier = barrier;
+        boss.arenaMinX = position.x - 7f;
+        boss.arenaMaxX = position.x + 3f;
+        boss.introTriggerX = position.x - 8f;
         return boss;
     }
 
@@ -138,7 +145,7 @@ public class BossSlime : MonoBehaviour
             }
         }
 
-        if (player == null || player.position.x < IntroTriggerX)
+        if (player == null || player.position.x < introTriggerX)
         {
             return;
         }
@@ -231,9 +238,9 @@ public class BossSlime : MonoBehaviour
 
         // Keep the boss inside its arena
         Vector2 position = body.position;
-        if (position.x < ArenaMinX || position.x > ArenaMaxX)
+        if (position.x < arenaMinX || position.x > arenaMaxX)
         {
-            position.x = Mathf.Clamp(position.x, ArenaMinX, ArenaMaxX);
+            position.x = Mathf.Clamp(position.x, arenaMinX, arenaMaxX);
             body.position = position;
             body.linearVelocity = new Vector2(0f, body.linearVelocity.y);
         }
