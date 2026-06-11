@@ -37,6 +37,7 @@ public class TutorialHint : MonoBehaviour
             case "バネで おおジャンプ! くうちゅうで Q!":
                 return "Qで くうちゅうアクション!";
             case "コイン5まいで W ひっさつ!":
+            case "コイン10まいで W ひっさつ!":
                 return "Wで ひっさつ!";
             case "トゲボールは ふめない! Fで うとう!":
                 return "Fで トゲを うつ!";

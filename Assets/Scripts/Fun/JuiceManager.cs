@@ -14,6 +14,7 @@ public class JuiceManager : MonoBehaviour
         public float startTime;
         public Color color;
         public float size;
+        public int stickerIndex;
     }
 
     const float PopupLifeSeconds = 1.05f;
@@ -21,6 +22,7 @@ public class JuiceManager : MonoBehaviour
     readonly List<FloatingPopup> popups = new List<FloatingPopup>();
     float trauma;
     Sprite particleSprite;
+    Texture2D popupStickerSheet;
     GUIStyle popupStyle;
     Coroutine hitStopCoroutine;
 
@@ -110,7 +112,8 @@ public class JuiceManager : MonoBehaviour
             worldPosition = worldPosition,
             startTime = Time.unscaledTime,
             color = color,
-            size = size
+            size = size,
+            stickerIndex = Instance.PickPopupSticker(text)
         });
     }
 
@@ -282,6 +285,11 @@ public class JuiceManager : MonoBehaviour
             popupStyle.fontStyle = FontStyle.Bold;
         }
 
+        if (popupStickerSheet == null)
+        {
+            popupStickerSheet = Resources.Load<Texture2D>("UI/PopupStickers");
+        }
+
         float uiScale = Mathf.Clamp(Screen.height / 1080f, 0.74f, 1.2f);
 
         for (int i = popups.Count - 1; i >= 0; i--)
@@ -304,16 +312,84 @@ public class JuiceManager : MonoBehaviour
 
             float alpha = progress < 0.65f ? 1f : 1f - (progress - 0.65f) / 0.35f;
             float popScale = 1f + Mathf.Max(0f, 0.35f - age * 2.2f);
-            popupStyle.fontSize = Mathf.RoundToInt(34f * popup.size * uiScale * popScale);
+            popupStyle.fontSize = Mathf.RoundToInt(24f * popup.size * uiScale * popScale);
 
-            Rect rect = new Rect(screenPoint.x - 150f, Screen.height - screenPoint.y - 30f, 300f, 60f);
+            float iconSize = 34f * popup.size * uiScale * popScale;
+            float textWidth = 250f * popup.size * uiScale;
+            Rect iconRect = new Rect(screenPoint.x - textWidth * 0.5f - iconSize * 0.45f, Screen.height - screenPoint.y - iconSize * 0.5f, iconSize, iconSize);
+            Rect rect = new Rect(iconRect.x + iconSize * 0.72f, Screen.height - screenPoint.y - 24f * popup.size * uiScale, textWidth, 48f * popup.size * uiScale);
+
+            DrawPopupSticker(iconRect, popup.stickerIndex, alpha);
 
             popupStyle.normal.textColor = new Color(0.05f, 0.08f, 0.12f, 0.75f * alpha);
-            GUI.Label(new Rect(rect.x + 2f, rect.y + 3f, rect.width, rect.height), popup.text, popupStyle);
+            GUI.Label(new Rect(rect.x + 1.5f, rect.y + 2.5f, rect.width, rect.height), popup.text, popupStyle);
 
             popupStyle.normal.textColor = WithAlpha(popup.color, alpha);
             GUI.Label(rect, popup.text, popupStyle);
         }
+    }
+
+    int PickPopupSticker(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return 0;
+        }
+
+        if (text.Contains("COMBO"))
+        {
+            return 1;
+        }
+
+        if (text.Contains("メダル") || text.Contains("BONUS"))
+        {
+            return 2;
+        }
+
+        if (text.Contains("TRICK") || text.Contains("ビュン"))
+        {
+            return 3;
+        }
+
+        if (text.Contains("READY") || text.Contains("ひっさつ") || text.Contains("ドッカーン"))
+        {
+            return 4;
+        }
+
+        if (text.Contains("チェック"))
+        {
+            return 5;
+        }
+
+        if (text.Contains("ハート") || text.Contains("ミス"))
+        {
+            return 6;
+        }
+
+        if (text.Contains("ふめ") || text.Contains("ふむ") || text.Contains("げきは") || text.Contains("ガキン"))
+        {
+            return 7;
+        }
+
+        return 0;
+    }
+
+    void DrawPopupSticker(Rect rect, int index, float alpha)
+    {
+        if (popupStickerSheet == null)
+        {
+            return;
+        }
+
+        index = Mathf.Clamp(index, 0, 7);
+        int column = index % 4;
+        int row = index / 4;
+        Rect uv = new Rect(column * 0.25f, row == 0 ? 0.5f : 0f, 0.25f, 0.5f);
+
+        Color original = GUI.color;
+        GUI.color = new Color(1f, 1f, 1f, alpha);
+        GUI.DrawTextureWithTexCoords(rect, popupStickerSheet, uv, true);
+        GUI.color = original;
     }
 }
 

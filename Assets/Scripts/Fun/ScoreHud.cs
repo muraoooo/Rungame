@@ -43,12 +43,26 @@ public class ScoreHud : MonoBehaviour
         float scale = Mathf.Clamp(Screen.height / 1080f, 0.74f, 1.2f);
 
         DrawScore(scale);
+        DrawHearts(scale);
         DrawStageLabel(scale);
         DrawStageIntro(scale);
         DrawActionStatus(scale);
         DrawRunStatus(scale);
         DrawStartHint(scale);
         DrawEndPanel(scale);
+    }
+
+    void DrawHearts(float scale)
+    {
+        infoStyle.fontSize = Mathf.RoundToInt(28f * scale);
+        infoStyle.alignment = TextAnchor.UpperLeft;
+
+        string hearts = new string('♥', RespawnSystem.CurrentHearts)
+            + new string('♡', RespawnSystem.MaxHearts - RespawnSystem.CurrentHearts);
+        Rect rect = new Rect(24f * scale, 84f * scale, 210f * scale, 34f * scale);
+        DrawOutlined(rect, hearts, infoStyle, new Color(1f, 0.25f, 0.35f));
+
+        infoStyle.alignment = TextAnchor.UpperRight;
     }
 
     void DrawStageLabel(float scale)
@@ -137,8 +151,7 @@ public class ScoreHud : MonoBehaviour
         }
         else
         {
-            string gauge = new string('★', ScoreSystem.SpecialCharge)
-                + new string('☆', ScoreSystem.SpecialChargeMax - ScoreSystem.SpecialCharge);
+            string gauge = ScoreSystem.SpecialCharge + "/" + ScoreSystem.SpecialChargeMax;
             DrawOutlined(specialRect, "W: " + gauge, infoStyle, new Color(0.75f, 0.8f, 0.85f));
         }
     }

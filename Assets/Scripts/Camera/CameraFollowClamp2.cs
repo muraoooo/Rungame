@@ -20,12 +20,18 @@ public class CameraFollowClamp2 : MonoBehaviour
 
     [Header("なめらかさ")]
     public float smoothTime = 0.15f;
+    public float verticalDeadZoneUp = 2.2f;
+    public float verticalFollowStrength = 0.35f;
 
     private Vector3 velocity = Vector3.zero;
+    private float baselinePlayerY;
+    private float baselineCameraY;
+    private bool hasBaseline;
 
     void Start()
     {
         FindPlayerIfNeeded();
+        CaptureBaseline();
         SnapToPlayer();
     }
 
@@ -87,11 +93,29 @@ public class CameraFollowClamp2 : MonoBehaviour
 
     Vector3 GetTargetPosition()
     {
+        if (!hasBaseline)
+        {
+            CaptureBaseline();
+        }
+
         Vector3 targetPosition = player.position + offset;
         targetPosition.x = Mathf.Clamp(targetPosition.x, minX, maxX);
-        targetPosition.y = Mathf.Max(targetPosition.y, minY);
+        float heightAboveBaseline = Mathf.Max(0f, player.position.y - baselinePlayerY - verticalDeadZoneUp);
+        targetPosition.y = Mathf.Max(baselineCameraY + heightAboveBaseline * verticalFollowStrength, minY);
         targetPosition.z = offset.z;
         return targetPosition;
+    }
+
+    void CaptureBaseline()
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        baselinePlayerY = player.position.y;
+        baselineCameraY = Mathf.Max(player.position.y + offset.y, minY);
+        hasBaseline = true;
     }
 
     void MoveBackgroundWithCamera()

@@ -2,8 +2,8 @@ using System.Collections;
 using UnityEngine;
 
 // King Slime boss for stage 1-5. Bowser rules: only stomps hurt it (3 hits),
-// it gets faster and angrier with each hit, spits poison globs, and guards
-// the goal behind a barrier until defeated.
+// it gets faster and angrier with each hit, and guards the goal behind a
+// barrier until defeated.
 public class BossSlime : MonoBehaviour
 {
     public static BossSlime Instance { get; private set; }
@@ -13,11 +13,7 @@ public class BossSlime : MonoBehaviour
     public int maxHealth = 3;
     public int Health { get; private set; }
 
-    const float ArenaMinX = 40f;
-    const float ArenaMaxX = 50.2f;
-    const float IntroTriggerX = 36f;
     const float InvulnerableSeconds = 1.6f;
-    const float SpitTelegraphSeconds = 0.4f;
 
     GameObject barrier;
     Rigidbody2D body;
@@ -33,12 +29,13 @@ public class BossSlime : MonoBehaviour
     bool wasAirborne;
     float invulnerableUntil;
     float nextHopTime;
-    float nextSpitTime;
     float nextImmunePopupTime;
-    float spitTelegraphUntil;
+    float arenaMinX;
+    float arenaMaxX;
+    float introTriggerX;
     float frameTimer;
     int frame;
-    bool spitTelegraphing;
+    GUIStyle bossHintStyle;
 
     public static BossSlime Spawn(Vector3 position, GameObject barrier)
     {
@@ -80,6 +77,9 @@ public class BossSlime : MonoBehaviour
 
         BossSlime boss = bossObject.AddComponent<BossSlime>();
         boss.barrier = barrier;
+        boss.arenaMinX = position.x - 5.5f;
+        boss.arenaMaxX = barrier != null ? barrier.transform.position.x - 0.8f : position.x + 4.5f;
+        boss.introTriggerX = position.x - 8f;
         return boss;
     }
 
@@ -97,7 +97,6 @@ public class BossSlime : MonoBehaviour
             idleSprites = Resources.LoadAll<Sprite>("Slime/Idle");
         }
         nextHopTime = Time.time + 1f;
-        nextSpitTime = Time.time + 2.5f;
     }
 
     void OnDestroy()
@@ -131,17 +130,16 @@ public class BossSlime : MonoBehaviour
             }
         }
 
-        if (player == null || player.position.x < IntroTriggerX)
+        if (player == null || player.position.x < introTriggerX)
         {
             return;
         }
 
         introduced = true;
         nextHopTime = Time.time + 0.8f;
-        nextSpitTime = Time.time + 1.6f;
         RetroSfx.PlayRoar();
         JuiceManager.Shake(0.45f);
-        JuiceManager.Popup(transform.position + Vector3.up * 2.6f, "VS キングスライム!!", new Color(1f, 0.4f, 0.9f), 1.6f);
+        JuiceManager.Popup(transform.position + Vector3.up * 2.6f, "あたまを 3かい ふめ!", new Color(1f, 0.9f, 0.25f), 2.2f);
     }
 
     void AnimateSprite()
@@ -168,12 +166,7 @@ public class BossSlime : MonoBehaviour
             return;
         }
 
-        if (Time.time < spitTelegraphUntil)
-        {
-            float flash = Mathf.Repeat(Time.unscaledTime * 14f, 1f) < 0.68f ? 1f : 0.82f;
-            spriteRenderer.color = Color.Lerp(baseColor, Color.white, flash);
-        }
-        else if (Time.time < invulnerableUntil)
+        if (Time.time < invulnerableUntil)
         {
             bool flashOn = Mathf.Repeat(Time.unscaledTime * 10f, 1f) < 0.5f;
             spriteRenderer.color = flashOn ? Color.white : baseColor;
@@ -204,7 +197,7 @@ public class BossSlime : MonoBehaviour
         wasAirborne = !grounded;
 
         // Hop toward the player, faster while enraged
-        if (!spitTelegraphing && grounded && Time.time >= nextHopTime && player != null)
+        if (grounded && Time.time >= nextHopTime && player != null)
         {
             float direction = Mathf.Sign(player.position.x - transform.position.x);
             float hopSpeed = 2.6f + rage * 0.9f;
@@ -216,102 +209,13 @@ public class BossSlime : MonoBehaviour
             }
         }
 
-        // Spit poison globs in an arc
-        if (!spitTelegraphing && Time.time >= nextSpitTime && player != null)
-        {
-            StartCoroutine(TelegraphThenSpit(rage));
-        }
-
         // Keep the boss inside its arena
         Vector2 position = body.position;
-        if (position.x < ArenaMinX || position.x > ArenaMaxX)
+        if (position.x < arenaMinX || position.x > arenaMaxX)
         {
-            position.x = Mathf.Clamp(position.x, ArenaMinX, ArenaMaxX);
+            position.x = Mathf.Clamp(position.x, arenaMinX, arenaMaxX);
             body.position = position;
             body.linearVelocity = new Vector2(0f, body.linearVelocity.y);
-        }
-    }
-
-    IEnumerator TelegraphThenSpit(int rage)
-    {
-        spitTelegraphing = true;
-        spitTelegraphUntil = Time.time + SpitTelegraphSeconds;
-
-        Vector3 baseScale = transform.localScale;
-        Vector3 mouth = transform.position + Vector3.up * 1f;
-        Vector2[] velocities = CreateSpitVelocities(rage);
-        ShowLandingWarnings(mouth, velocities);
-
-        float elapsed = 0f;
-        while (elapsed < SpitTelegraphSeconds)
-        {
-            if (defeated || GameSession.HasEnded)
-            {
-                transform.localScale = baseScale;
-                spitTelegraphing = false;
-                spitTelegraphUntil = 0f;
-                yield break;
-            }
-
-            float progress = elapsed / SpitTelegraphSeconds;
-            float swell = 1f + Mathf.Sin(progress * Mathf.PI) * 0.1f;
-            transform.localScale = new Vector3(baseScale.x * swell, baseScale.y * (1f + (swell - 1f) * 0.7f), baseScale.z);
-
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        transform.localScale = baseScale;
-        spitTelegraphing = false;
-        spitTelegraphUntil = 0f;
-
-        if (!defeated && GameSession.HasStarted && !GameSession.HasEnded)
-        {
-            SpitGlobs(mouth, velocities);
-        }
-
-        nextSpitTime = Time.time + Mathf.Max(1.4f, 3.2f - rage * 0.7f);
-    }
-
-    Vector2[] CreateSpitVelocities(int rage)
-    {
-        float direction = player != null ? Mathf.Sign(player.position.x - transform.position.x) : -1f;
-        if (direction == 0f)
-        {
-            direction = -1f;
-        }
-
-        int count = 2 + rage;
-        Vector2[] velocities = new Vector2[count];
-        for (int i = 0; i < count; i++)
-        {
-            float speedX = direction * (3.2f + i * 1.6f);
-            float speedY = 6.5f + Random.Range(-0.5f, 1.2f);
-            velocities[i] = new Vector2(speedX, speedY);
-        }
-
-        return velocities;
-    }
-
-    void ShowLandingWarnings(Vector3 mouth, Vector2[] velocities)
-    {
-        foreach (Vector2 velocity in velocities)
-        {
-            Vector3 landingPoint;
-            float landingSeconds;
-            if (BossProjectile.TryPredictLanding(mouth, velocity, out landingPoint, out landingSeconds))
-            {
-                BossProjectile.ShowLandingMarker(landingPoint, SpitTelegraphSeconds + landingSeconds + 0.15f);
-            }
-        }
-    }
-
-    void SpitGlobs(Vector3 mouth, Vector2[] velocities)
-    {
-        RetroSfx.PlayShoot();
-        foreach (Vector2 velocity in velocities)
-        {
-            BossProjectile.Spawn(mouth, velocity);
         }
     }
 
@@ -388,9 +292,56 @@ public class BossSlime : MonoBehaviour
         }
         else
         {
-            JuiceManager.Popup(transform.position + Vector3.up * 2.4f, "あと " + Health + " かい!", Color.white, 1.3f);
+            JuiceManager.Popup(transform.position + Vector3.up * 2.4f, "あと " + Health + " かい ふむ!", Color.white, 1.3f);
             RetroSfx.PlayRoar();
         }
+    }
+
+    void OnGUI()
+    {
+        if (!introduced || defeated || GameSession.HasEnded)
+        {
+            return;
+        }
+
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            return;
+        }
+
+        if (bossHintStyle == null)
+        {
+            bossHintStyle = new GUIStyle(GUI.skin.label);
+            bossHintStyle.alignment = TextAnchor.MiddleCenter;
+            bossHintStyle.fontStyle = FontStyle.Bold;
+        }
+
+        Vector3 screen = mainCamera.WorldToScreenPoint(transform.position + Vector3.up * 2.9f);
+        if (screen.z < 0f)
+        {
+            return;
+        }
+
+        float scale = Mathf.Clamp(Screen.height / 1080f, 0.72f, 1.25f);
+        bossHintStyle.fontSize = Mathf.RoundToInt(28f * scale);
+        string hearts = new string('♥', Health) + new string('♡', maxHealth - Health);
+        string text = "↓ ふむ!  " + hearts;
+        Rect rect = new Rect(screen.x - 150f * scale, Screen.height - screen.y - 28f * scale, 300f * scale, 46f * scale);
+        DrawOutlined(rect, text, bossHintStyle, new Color(1f, 0.92f, 0.22f));
+    }
+
+    static void DrawOutlined(Rect rect, string text, GUIStyle style, Color color)
+    {
+        Color original = style.normal.textColor;
+        float offset = Mathf.Max(2f, rect.height * 0.05f);
+
+        style.normal.textColor = new Color(0.08f, 0.03f, 0.1f, 0.86f);
+        GUI.Label(new Rect(rect.x + offset, rect.y + offset, rect.width, rect.height), text, style);
+
+        style.normal.textColor = color;
+        GUI.Label(rect, text, style);
+        style.normal.textColor = original;
     }
 
     void KillPlayer(GameObject playerObject)

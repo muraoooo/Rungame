@@ -18,9 +18,6 @@ public class SpecialAttack : MonoBehaviour
 
         if (!ScoreSystem.TryConsumeSpecial())
         {
-            int remaining = ScoreSystem.SpecialChargeMax - ScoreSystem.SpecialCharge;
-            JuiceManager.Popup(transform.position + Vector3.up * 1.6f,
-                "あとコイン x" + remaining + " で ひっさつ!", new Color(1f, 0.84f, 0.25f), 0.9f);
             return;
         }
 

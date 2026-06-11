@@ -24,14 +24,15 @@ public static class StageArtBootstrap
             DisableLegacyBackdrop();
         }
 
-        BuildBackdropLayer(root.transform, stage, "sky", -40, 0f, 1f, 0f, 1.15f);
-        BuildBackdropLayer(root.transform, stage, "far", -35, -0.15f, 0.92f, 0.05f, 1.1f);
-        BuildBackdropLayer(root.transform, stage, "mid", -30, -0.7f, 0.86f, 0.16f, 1.05f);
-        BuildBackdropLayer(root.transform, stage, "near", -18, -1.9f, 1f, 0.62f, 1.05f);
+        BuildBackdropLayer(root.transform, stage, "sky", -40, 0.05f, 1f, 0f, 1.65f, 1f);
+        BuildBackdropLayer(root.transform, stage, "far", -35, -0.08f, 0.92f, 0.05f, 1.48f, 1f);
+        BuildBackdropLayer(root.transform, stage, "mid", -30, -0.5f, 0.86f, 0.16f, 1.4f, 1f);
+        BuildBackdropLayer(root.transform, stage, "near", -18, -1.7f, 1f, 0.62f, 1.32f, 1f);
 
         BuildPropLayer(root.transform, stage, "Far", -32, 8, 1.2f, 1.1f, 0.07f, 101);
         BuildPropLayer(root.transform, stage, "Mid", -24, 10, -0.7f, 1f, 0.18f, 202);
         BuildPropLayer(root.transform, stage, "Near", -16, 7, -2.1f, 1.15f, 0.75f, 303);
+        BuildPropLayer(root.transform, stage, "Near", 18, 5, -3.05f, 1.85f, 1.05f, 404);
     }
 
     static void DisableLegacyBackdrop()
@@ -62,7 +63,7 @@ public static class StageArtBootstrap
         return false;
     }
 
-    static void BuildBackdropLayer(Transform root, int stage, string name, int sortingOrder, float y, float scale, float parallaxStrength, float heightScale)
+    static void BuildBackdropLayer(Transform root, int stage, string name, int sortingOrder, float y, float scale, float parallaxStrength, float heightScale, float verticalParallaxStrength)
     {
         Sprite sprite = Resources.Load<Sprite>("StageArt/Stage" + stage + "/" + name);
         if (sprite == null)
@@ -80,6 +81,7 @@ public static class StageArtBootstrap
         tiled.scale = scale;
         tiled.parallaxStrength = parallaxStrength;
         tiled.heightScale = heightScale;
+        tiled.verticalParallaxStrength = verticalParallaxStrength;
     }
 
     static void BuildPropLayer(Transform root, int stage, string folder, int sortingOrder, int elementCount, float baseY, float scale, float parallaxStrength, int seed)
